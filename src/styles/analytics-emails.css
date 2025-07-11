@@ -1,0 +1,472 @@
+/* Estilos adicionales para la funcionalidad de emails en Analytics */
+
+/* Navegación por pestañas */
+.tabs-navigation {
+  display: flex;
+  margin-bottom: 2rem;
+  border-bottom: 2px solid #e5e7eb;
+  gap: 0.5rem;
+}
+
+.tab-button {
+  padding: 0.75rem 1.5rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  border-radius: 0.5rem 0.5rem 0 0;
+  transition: all 0.2s ease;
+  font-weight: 500;
+  color: #6b7280;
+}
+
+.tab-button:hover {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.tab-button.active {
+  background-color: #3b82f6;
+  color: white;
+  border-bottom: 2px solid #3b82f6;
+}
+
+/* Notificaciones */
+.notification-container {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  z-index: 1000;
+}
+
+/* Estadísticas de emails */
+.email-stats-section {
+  margin: 2rem 0;
+}
+
+.email-stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.email-stat {
+  text-align: center;
+  padding: 1rem;
+  background: #f8f9fa;
+  border-radius: 0.5rem;
+}
+
+.email-stat-value {
+  font-size: 2rem;
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+.email-stat-value:nth-child(1) {
+  color: #3b82f6; /* Azul */
+}
+
+.email-stat-value:nth-child(2) {
+  color: #8b5cf6; /* Púrpura */
+}
+
+.email-stat-value:nth-child(3) {
+  color: #f59e0b; /* Naranja */
+}
+
+.email-stat-value:nth-child(4) {
+  color: #10b981; /* Verde */
+}
+
+.email-stat-label {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.email-stats-footer {
+  padding-top: 1rem;
+  border-top: 1px solid #e5e7eb;
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+/* Sección de emails */
+.emails-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+/* Controles automáticos */
+.automated-controls {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.automated-controls .card {
+  text-align: center;
+}
+
+.automated-controls .card h3 {
+  margin-bottom: 1rem;
+  color: #374151;
+}
+
+.automated-controls .card p {
+  margin-bottom: 1.5rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* Sección de envío manual */
+.manual-email-section .card {
+  text-align: center;
+}
+
+.manual-email-section .card h3 {
+  margin-bottom: 1rem;
+  color: #374151;
+}
+
+.manual-email-section .card p {
+  margin-bottom: 1.5rem;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+
+/* Modal */
+.modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.modal-content {
+  background: white;
+  border-radius: 0.75rem;
+  box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+  max-width: 500px;
+  width: 90%;
+  max-height: 90vh;
+  overflow-y: auto;
+}
+
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.5rem;
+  border-bottom: 1px solid #e5e7eb;
+}
+
+.modal-header h3 {
+  margin: 0;
+  color: #374151;
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #6b7280;
+  padding: 0.25rem;
+  border-radius: 0.25rem;
+  transition: all 0.2s ease;
+}
+
+.modal-close:hover {
+  background-color: #f3f4f6;
+  color: #374151;
+}
+
+.modal-body {
+  padding: 1.5rem;
+}
+
+.modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: 1.5rem;
+  border-top: 1px solid #e5e7eb;
+}
+
+.form-group {
+  margin-bottom: 1.5rem;
+}
+
+.form-group label {
+  display: block;
+  margin-bottom: 0.5rem;
+  font-weight: 500;
+  color: #374151;
+}
+
+.form-group input,
+.form-group select {
+  width: 100%;
+  padding: 0.75rem;
+  border: 1px solid #d1d5db;
+  border-radius: 0.5rem;
+  font-size: 1rem;
+  transition: border-color 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group select:focus {
+  outline: none;
+  border-color: #3b82f6;
+  box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+}
+
+/* Acciones en la tabla de usuarios */
+.actions-cell {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.btn-sm {
+  padding: 0.5rem;
+  font-size: 0.875rem;
+  min-width: 2.5rem;
+  height: 2.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.btn-outline {
+  background: white;
+  border: 1px solid #d1d5db;
+  color: #374151;
+}
+
+.btn-outline:hover {
+  background-color: #f3f4f6;
+  border-color: #9ca3af;
+}
+
+.btn-outline:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Plantillas de email */
+.email-templates-section {
+  margin-top: 2rem;
+}
+
+.templates-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin: 1.5rem 0;
+}
+
+.template-card {
+  padding: 1.5rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.75rem;
+  text-align: center;
+  transition: all 0.2s ease;
+}
+
+.template-card:hover {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+  border-color: #d1d5db;
+}
+
+.template-icon {
+  font-size: 2.5rem;
+  margin-bottom: 1rem;
+}
+
+.template-card h4 {
+  margin: 0 0 0.75rem 0;
+  color: #374151;
+  font-size: 1.125rem;
+}
+
+.template-card p {
+  margin: 0 0 1rem 0;
+  color: #6b7280;
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.template-card small {
+  color: #9ca3af;
+  font-size: 0.75rem;
+  font-style: italic;
+}
+
+/* Botones adicionales */
+.btn-secondary {
+  background-color: #6b7280;
+  color: white;
+  border: 1px solid #6b7280;
+}
+
+.btn-secondary:hover {
+  background-color: #4b5563;
+  border-color: #4b5563;
+}
+
+.btn-secondary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .tabs-navigation {
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .tab-button {
+    border-radius: 0;
+    border-bottom: 1px solid #e5e7eb;
+  }
+
+  .tab-button.active {
+    border-bottom: 2px solid #3b82f6;
+  }
+
+  .automated-controls {
+    grid-template-columns: 1fr;
+  }
+
+  .templates-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .email-stats-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .modal-content {
+    width: 95%;
+    margin: 1rem;
+  }
+
+  .modal-footer {
+    flex-direction: column;
+  }
+
+  .actions-cell {
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .email-stats-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.modal-content {
+  animation: fadeIn 0.2s ease-out;
+}
+
+.notification-container {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Estados de carga */
+.btn:disabled {
+  position: relative;
+  color: transparent;
+}
+
+.btn:disabled::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 1rem;
+  height: 1rem;
+  margin: -0.5rem 0 0 -0.5rem;
+  border: 2px solid transparent;
+  border-top-color: currentColor;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Mejoras de accesibilidad */
+.btn:focus,
+.tab-button:focus,
+input:focus,
+select:focus {
+  outline: 2px solid #3b82f6;
+  outline-offset: 2px;
+}
+
+.modal-content:focus {
+  outline: none;
+}
+
+/* Tooltips simples */
+[title] {
+  position: relative;
+}
+
+[title]:hover::after {
+  content: attr(title);
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  background: #374151;
+  color: white;
+  padding: 0.5rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
+  white-space: nowrap;
+  z-index: 1000;
+  margin-bottom: 0.25rem;
+}
+
+[title]:hover::before {
+  content: "";
+  position: absolute;
+  bottom: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 0.25rem solid transparent;
+  border-top-color: #374151;
+  z-index: 1000;
+}

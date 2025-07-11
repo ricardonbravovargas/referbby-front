@@ -1,0 +1,718 @@
+/* Enhanced Stripe Checkout Styles */
+.stripe-checkout-form {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  position: relative;
+}
+
+/* Main container with Stripe-themed glass morphism */
+.stripe-checkout-form::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  background: linear-gradient(
+    135deg,
+    rgba(109, 40, 217, 0.08),
+    rgba(59, 130, 246, 0.05)
+  );
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  border: 1px solid rgba(109, 40, 217, 0.15);
+  z-index: -1;
+  box-shadow: 0 20px 60px rgba(109, 40, 217, 0.15);
+}
+
+/* Enhanced Stripe title */
+.stripe-title {
+  color: #6d28d9 !important;
+  margin-bottom: 2rem !important;
+  text-align: center !important;
+  font-size: 1.8rem !important;
+  font-weight: 800 !important;
+  position: relative;
+  background: linear-gradient(135deg, #6d28d9, #3b82f6);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.stripe-title::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #6d28d9, #3b82f6);
+  border-radius: 2px;
+}
+
+.stripe-icon {
+  font-size: 1.5rem;
+  animation: stripe-pulse 2s infinite;
+}
+
+@keyframes stripe-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+/* Section styling with Stripe branding */
+.customer-info,
+.payment-info {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0.85)
+  );
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(109, 40, 217, 0.2);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 32px rgba(109, 40, 217, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+/* Stripe signature animation */
+.customer-info::before,
+.payment-info::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #6d28d9,
+    #3b82f6,
+    #8b5cf6,
+    transparent
+  );
+  animation: stripe-flow 4s infinite;
+}
+
+@keyframes stripe-flow {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Enhanced section headers */
+.customer-info h3,
+.payment-info h3 {
+  margin-bottom: 1.5rem;
+  color: #1e293b;
+  font-size: 1.4rem;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.section-icon {
+  font-size: 1.2rem;
+}
+
+/* Form layout improvements */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Enhanced input styling with Stripe theme */
+.input {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border: 2px solid rgba(109, 40, 217, 0.15);
+  border-radius: 12px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.9),
+    rgba(255, 255, 255, 0.7)
+  );
+  color: #1e293b;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+  margin-bottom: 0;
+  font-size: 16px;
+  font-weight: 500;
+  position: relative;
+  backdrop-filter: blur(10px);
+}
+
+.input:focus {
+  border-color: #6d28d9;
+  outline: none;
+  box-shadow:
+    0 0 0 4px rgba(109, 40, 217, 0.12),
+    0 8px 25px rgba(109, 40, 217, 0.2);
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.input::placeholder {
+  color: #64748b;
+  font-weight: 400;
+}
+
+/* Card element container with Stripe styling */
+.card-element-container {
+  padding: 1.2rem 1.5rem;
+  border: 2px solid rgba(109, 40, 217, 0.15);
+  border-radius: 12px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.9),
+    rgba(255, 255, 255, 0.7)
+  );
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  min-height: 48px;
+  display: flex;
+  align-items: center;
+  position: relative;
+  backdrop-filter: blur(10px);
+  /* Ensure Stripe element can receive input */
+  pointer-events: auto;
+  overflow: visible;
+}
+
+.card-element-container::after {
+  content: "💳";
+  position: absolute;
+  right: 1rem;
+  opacity: 0.5;
+  font-size: 1.2rem;
+  /* Prevent icon from blocking input */
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* Ensure Stripe CardElement has proper styling */
+.card-element-container .StripeElement {
+  width: 100%;
+  padding: 0;
+  background: transparent;
+  border: none;
+  outline: none;
+  /* Ensure the Stripe element can receive clicks and focus */
+  pointer-events: auto;
+  z-index: 2;
+  position: relative;
+}
+
+.card-element-container:focus-within {
+  border-color: #6d28d9;
+  box-shadow:
+    0 0 0 4px rgba(109, 40, 217, 0.12),
+    0 8px 25px rgba(109, 40, 217, 0.2);
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+/* Referral info with Stripe celebration styling */
+.referral-info {
+  background: linear-gradient(135deg, #10b981, #059669, #047857);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 16px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.referral-emoji {
+  font-size: 1.5rem;
+  animation: bounce 2s infinite;
+}
+
+.referral-emoji:last-child {
+  animation-delay: 0.5s;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Order summary with Stripe premium styling */
+.order-summary {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(248, 250, 252, 0.9)
+  );
+  border: 1px solid rgba(109, 40, 217, 0.2);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 12px 40px rgba(109, 40, 217, 0.12);
+  position: relative;
+}
+
+.order-summary::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #6d28d9, #3b82f6, #8b5cf6, #6d28d9);
+  border-radius: 20px 20px 0 0;
+  background-size: 200% 100%;
+  animation: stripe-gradient 3s ease infinite;
+}
+
+@keyframes stripe-gradient {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.order-summary h4 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #1e293b;
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-align: center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.summary-icon {
+  font-size: 1.2rem;
+}
+
+/* Summary lines with improved styling */
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+  color: #475569;
+  font-weight: 500;
+  padding: 0.5rem 0;
+  position: relative;
+}
+
+.summary-line:not(:last-child):after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(109, 40, 217, 0.15),
+    transparent
+  );
+}
+
+.summary-line.total {
+  font-weight: 700;
+  font-size: 1.2rem;
+  border-top: 2px solid rgba(109, 40, 217, 0.2);
+  padding-top: 1rem;
+  margin-top: 1rem;
+  color: #6d28d9;
+  background: linear-gradient(
+    90deg,
+    rgba(109, 40, 217, 0.08),
+    rgba(109, 40, 217, 0.15),
+    rgba(109, 40, 217, 0.08)
+  );
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+/* SPECTACULAR Stripe Pay Button */
+.stripe-pay-button {
+  width: 100%;
+  background: linear-gradient(135deg, #6d28d9, #3b82f6, #8b5cf6);
+  color: white;
+  border: none;
+  padding: 1.4rem 2rem;
+  border-radius: 18px;
+  font-size: 1.1rem;
+  font-weight: 800;
+  cursor: pointer;
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 1.5rem;
+  box-shadow:
+    0 12px 35px rgba(109, 40, 217, 0.35),
+    inset 0 2px 0 rgba(255, 255, 255, 0.2),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  min-height: 64px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.stripe-pay-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(
+    45deg,
+    transparent 40%,
+    rgba(255, 255, 255, 0.3) 50%,
+    transparent 60%
+  );
+  transform: translateX(-100%) skewX(-20deg);
+  transition: transform 0.6s;
+}
+
+.stripe-pay-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #5b21b6, #2563eb, #7c3aed);
+  transform: translateY(-4px) scale(1.02);
+  box-shadow:
+    0 20px 45px rgba(109, 40, 217, 0.5),
+    inset 0 2px 0 rgba(255, 255, 255, 0.3),
+    inset 0 -2px 0 rgba(0, 0, 0, 0.1);
+}
+
+.stripe-pay-button:hover:not(:disabled)::before {
+  transform: translateX(100%) skewX(-20deg);
+}
+
+.stripe-pay-button:active:not(:disabled) {
+  transform: translateY(-2px) scale(1.01);
+  box-shadow:
+    0 15px 35px rgba(109, 40, 217, 0.4),
+    inset 0 2px 0 rgba(255, 255, 255, 0.2);
+}
+
+.stripe-pay-button:disabled {
+  background: linear-gradient(135deg, #94a3b8, #64748b);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+.stripe-pay-button:disabled::before {
+  display: none;
+}
+
+/* Button content styling */
+.button-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 1rem;
+  position: relative;
+  z-index: 2;
+}
+
+.button-text {
+  font-weight: 800;
+  letter-spacing: 1px;
+}
+
+.payment-icon,
+.card-icons {
+  font-size: 1.3rem;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.3));
+}
+
+/* Loading spinner */
+.loading-spinner {
+  width: 20px;
+  height: 20px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top: 2px solid white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-right: 0.5rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Button shine effect */
+.button-shine {
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.4),
+    transparent
+  );
+  transition: left 0.5s ease;
+  pointer-events: none;
+}
+
+.stripe-pay-button:hover .button-shine {
+  left: 100%;
+}
+
+/* Enhanced Stripe info section */
+.stripe-info {
+  text-align: center;
+  color: #475569;
+  background: linear-gradient(
+    135deg,
+    rgba(109, 40, 217, 0.05),
+    rgba(59, 130, 246, 0.05)
+  );
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid rgba(109, 40, 217, 0.15);
+  position: relative;
+}
+
+.stripe-info::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #6d28d9, #3b82f6);
+  border-radius: 16px 16px 0 0;
+}
+
+.security-text {
+  margin: 0 0 0.5rem 0;
+  font-size: 1rem;
+  font-weight: 700;
+  color: #6d28d9;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.security-icon {
+  font-size: 1.2rem;
+  animation: security-pulse 2s infinite;
+}
+
+@keyframes security-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.1);
+    opacity: 0.8;
+  }
+}
+
+.features-text {
+  margin: 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+  opacity: 0.8;
+}
+
+/* Loading state */
+.loading-stripe {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 400px;
+  background: linear-gradient(
+    135deg,
+    rgba(109, 40, 217, 0.05),
+    rgba(59, 130, 246, 0.05)
+  );
+  border-radius: 20px;
+  border: 1px solid rgba(109, 40, 217, 0.15);
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .stripe-checkout-form {
+    margin: 1rem;
+  }
+
+  .stripe-checkout-form::before {
+    left: -10px;
+    right: -10px;
+    top: -10px;
+    bottom: -10px;
+  }
+
+  .customer-info,
+  .payment-info {
+    padding: 1.5rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .order-summary {
+    padding: 1.5rem;
+  }
+
+  .stripe-pay-button {
+    font-size: 1rem;
+    padding: 1.2rem 1.5rem;
+    min-height: 56px;
+  }
+
+  .stripe-title {
+    font-size: 1.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .customer-info,
+  .payment-info,
+  .order-summary,
+  .stripe-info {
+    padding: 1.2rem;
+  }
+
+  .customer-info h3,
+  .payment-info h3 {
+    font-size: 1.2rem;
+  }
+
+  .stripe-pay-button {
+    font-size: 0.9rem;
+    letter-spacing: 0.5px;
+  }
+
+  .stripe-title {
+    font-size: 1.3rem !important;
+  }
+}
+
+/* Dark mode support */
+[data-theme="dark"] .stripe-checkout-form::before {
+  background: linear-gradient(
+    135deg,
+    rgba(109, 40, 217, 0.15),
+    rgba(59, 130, 246, 0.08)
+  );
+  border-color: rgba(109, 40, 217, 0.2);
+}
+
+[data-theme="dark"] .customer-info,
+[data-theme="dark"] .payment-info,
+[data-theme="dark"] .order-summary {
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2));
+  border-color: rgba(109, 40, 217, 0.2);
+}
+
+[data-theme="dark"] .customer-info h3,
+[data-theme="dark"] .payment-info h3,
+[data-theme="dark"] .order-summary h4 {
+  color: #f1f5f9;
+}
+
+[data-theme="dark"] .input,
+[data-theme="dark"] .card-element-container {
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
+  color: #f1f5f9;
+  border-color: rgba(109, 40, 217, 0.2);
+}
+
+/* Ensure dark mode doesn't interfere with Stripe element */
+[data-theme="dark"] .card-element-container .StripeElement {
+  background: transparent;
+  color: #f1f5f9;
+}
+
+[data-theme="dark"] .summary-line {
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .summary-line.total {
+  color: #a78bfa;
+  background: linear-gradient(
+    90deg,
+    rgba(167, 139, 250, 0.1),
+    rgba(167, 139, 250, 0.2),
+    rgba(167, 139, 250, 0.1)
+  );
+}
+
+[data-theme="dark"] .stripe-info {
+  background: linear-gradient(
+    135deg,
+    rgba(109, 40, 217, 0.1),
+    rgba(59, 130, 246, 0.1)
+  );
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .stripe-title {
+  background: linear-gradient(135deg, #a78bfa, #60a5fa);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+[data-theme="dark"] .security-text {
+  color: #a78bfa;
+}

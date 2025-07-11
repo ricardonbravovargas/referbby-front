@@ -1,0 +1,236 @@
+/* Estilos para el componente ReferralLink */
+.referral-card {
+  background: var(--navbar-bg, rgba(255, 255, 255, 0.95));
+  background-size: 300% 300%;
+  animation: gradientMove 8s ease infinite;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px var(--navbar-shadow, rgba(0, 0, 0, 0.1));
+  overflow: hidden;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
+  border: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+}
+
+.referral-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 8px 24px var(--navbar-shadow, rgba(0, 0, 0, 0.15));
+}
+
+.referral-card-header {
+  padding: 1.5rem;
+  border-bottom: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+}
+
+.referral-card-title {
+  margin: 0;
+  color: var(--text-color, #333);
+  font-size: 1.5rem;
+  font-weight: bold;
+}
+
+.referral-card-description {
+  margin: 0.5rem 0 0;
+  color: var(--text-color, #333);
+  opacity: 0.8;
+  font-size: 0.9rem;
+}
+
+.referral-card-content {
+  padding: 1.5rem;
+}
+
+.referral-link-container {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.referral-link-input {
+  flex: 1;
+  padding: 0.6rem 0.8rem;
+  border: 2px solid var(--border-color, rgba(0, 0, 0, 0.1));
+  border-radius: 8px;
+  background: var(--bg-gradient, white);
+  color: var(--text-color, #333);
+  font-size: 0.75rem;
+  transition: all 0.3s ease;
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-family: monospace;
+}
+
+.referral-link-input:focus {
+  border-color: var(--accent-color, #e600b8);
+  outline: none;
+  box-shadow: 0 0 0 2px rgba(230, 0, 184, 0.2);
+}
+
+.referral-button {
+  background: none;
+  border: 2px solid var(--text-color, #333);
+  color: var(--text-color, #333);
+  padding: 0.75rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 44px;
+}
+
+.referral-button:hover:not(:disabled) {
+  background: var(--accent-color, #e600b8);
+  color: white;
+  border-color: var(--accent-color, #e600b8);
+  transform: scale(1.05);
+}
+
+.referral-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.referral-stats {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  margin-top: 1.5rem;
+}
+
+.referral-stat-box {
+  background: var(--bg-gradient, rgba(240, 240, 240, 0.5));
+  background-size: 300% 300%;
+  animation: gradientMove 8s ease infinite;
+  padding: 1.5rem;
+  border-radius: 8px;
+  text-align: center;
+  border: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+  transition: transform 0.3s ease;
+}
+
+.referral-stat-box:hover {
+  transform: scale(1.05);
+}
+
+.referral-stat-value {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--accent-color, #e600b8);
+  margin: 0;
+}
+
+.referral-stat-label {
+  font-size: 0.9rem;
+  color: var(--text-color, #333);
+  opacity: 0.8;
+  margin: 0.5rem 0 0;
+}
+
+.referral-card-footer {
+  padding: 1.5rem;
+  border-top: 1px solid var(--border-color, rgba(0, 0, 0, 0.1));
+}
+
+.referral-info-text {
+  margin: 0;
+  font-size: 0.9rem;
+  color: var(--text-color, #333);
+  opacity: 0.8;
+}
+
+/* Alerta para usuarios no embajadores */
+.referral-card-alert {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  background: rgba(244, 67, 54, 0.1);
+  border-left: 4px solid #f44336;
+  padding: 1rem;
+  margin: 1rem 0;
+  border-radius: 4px;
+}
+
+.referral-card-alert svg {
+  color: #f44336;
+  flex-shrink: 0;
+}
+
+.referral-card-alert p {
+  margin: 0;
+  color: var(--text-color, #333);
+  font-weight: 500;
+}
+
+/* Animación del gradiente */
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}
+
+/* Animación de spin para el loader */
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+/* Estilos responsivos */
+@media (max-width: 768px) {
+  .referral-link-container {
+    flex-direction: column;
+  }
+
+  .referral-link-input {
+    max-width: 100%;
+    width: 100%;
+  }
+
+  .referral-button {
+    width: 100%;
+    margin-top: 0.5rem;
+  }
+
+  .referral-stats {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Estilos para el wrapper de página cuando se usa como página independiente */
+.page-wrapper {
+  min-height: 100vh;
+  background: var(--body-bg, #f5f5f5);
+  padding: 2rem 0;
+}
+
+.page-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 2rem;
+}
+
+/* Variables CSS por defecto si no están definidas */
+:root {
+  --text-color: #333;
+  --accent-color: #e600b8;
+  --border-color: rgba(0, 0, 0, 0.1);
+  --navbar-bg: rgba(255, 255, 255, 0.95);
+  --navbar-shadow: rgba(0, 0, 0, 0.1);
+  --bg-gradient: rgba(240, 240, 240, 0.5);
+  --body-bg: #f5f5f5;
+}

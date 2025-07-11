@@ -1,0 +1,410 @@
+/* ReferralDashboard.css - Estilos específicos para el panel de referidos */
+
+.referral-dashboard {
+  min-height: 100vh;
+  background: var(--bg-gradient);
+  background-size: 300% 300%;
+  animation: gradientMove 8s ease infinite;
+  padding: 2rem 0;
+}
+
+.referral-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+/* Header del dashboard */
+.referral-header {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  padding: 2rem;
+  margin-bottom: 2rem;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.referral-header-content {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.referral-title {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: var(--text-color);
+  margin: 0;
+  background: linear-gradient(45deg, var(--accent-color), var(--hover-color));
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.referral-subtitle {
+  color: var(--text-color);
+  margin: 0.5rem 0 0 0;
+  opacity: 0.8;
+}
+
+.refresh-button {
+  background: var(--accent-color);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.5rem;
+  border-radius: 8px;
+  font-weight: bold;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 15px rgba(230, 0, 184, 0.3);
+}
+
+.refresh-button:hover:not(:disabled) {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(230, 0, 184, 0.4);
+}
+
+.refresh-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+/* Grid de estadísticas */
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+  gap: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.stat-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  padding: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  transition: all 0.3s ease;
+}
+
+.stat-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+}
+
+.stat-content {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.stat-icon {
+  width: 3rem;
+  height: 3rem;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(45deg, var(--accent-color), var(--hover-color));
+}
+
+.stat-info h3 {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0 0 0.25rem 0;
+  opacity: 0.7;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.stat-info p {
+  font-size: 2rem;
+  font-weight: bold;
+  color: var(--text-color);
+  margin: 0;
+}
+
+/* Secciones principales */
+.referral-section {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 2rem;
+  margin-bottom: 2rem;
+}
+
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0 0 1.5rem 0;
+}
+
+/* Estados de carga y error */
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+}
+
+.loading-spinner {
+  width: 3rem;
+  height: 3rem;
+  border: 3px solid rgba(230, 0, 184, 0.3);
+  border-top: 3px solid var(--accent-color);
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-bottom: 1rem;
+}
+
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+.loading-text {
+  color: var(--text-color);
+  opacity: 0.7;
+}
+
+.error-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+}
+
+.error-icon {
+  color: #dc3545;
+  margin-bottom: 1rem;
+}
+
+.error-text {
+  color: #dc3545;
+  font-weight: 600;
+}
+
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 3rem;
+  text-align: center;
+}
+
+.empty-icon {
+  color: var(--text-color);
+  opacity: 0.3;
+  margin-bottom: 1rem;
+}
+
+.empty-text {
+  color: var(--text-color);
+  opacity: 0.7;
+  font-size: 1.125rem;
+}
+
+/* Tabla de comisiones */
+.commissions-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.commissions-table th {
+  background: rgba(230, 0, 184, 0.1);
+  color: var(--text-color);
+  font-weight: 600;
+  padding: 1rem;
+  text-align: left;
+  border-bottom: 2px solid var(--accent-color);
+  font-size: 0.875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.commissions-table td {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+  color: var(--text-color);
+}
+
+.commissions-table tr:hover {
+  background: rgba(230, 0, 184, 0.05);
+}
+
+.client-info {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.client-name {
+  font-weight: 600;
+  color: var(--text-color);
+}
+
+.client-email {
+  font-size: 0.875rem;
+  color: var(--text-color);
+  opacity: 0.6;
+}
+
+.commission-amount {
+  font-weight: 600;
+  color: #28a745;
+}
+
+.status-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.status-paid {
+  background: rgba(40, 167, 69, 0.1);
+  color: #28a745;
+  border: 1px solid rgba(40, 167, 69, 0.3);
+}
+
+.status-pending {
+  background: rgba(255, 193, 7, 0.1);
+  color: #ffc107;
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+/* Mensajes de acceso */
+.access-message {
+  min-height: 100vh;
+  background: var(--bg-gradient);
+  background-size: 300% 300%;
+  animation: gradientMove 8s ease infinite;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 2rem;
+}
+
+.access-card {
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(10px);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 2rem;
+  max-width: 400px;
+  width: 100%;
+  text-align: center;
+}
+
+.access-icon {
+  margin-bottom: 1rem;
+}
+
+.access-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  color: var(--text-color);
+  margin: 0 0 0.5rem 0;
+}
+
+.access-subtitle {
+  font-size: 1.125rem;
+  font-weight: 500;
+  margin: 0 0 1rem 0;
+}
+
+.access-subtitle.restricted {
+  color: #dc3545;
+}
+
+.access-text {
+  color: var(--text-color);
+  opacity: 0.7;
+  line-height: 1.5;
+  margin: 0 0 1rem 0;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .referral-dashboard {
+    padding: 1rem 0;
+  }
+
+  .referral-container {
+    padding: 0 0.5rem;
+  }
+
+  .referral-header {
+    padding: 1.5rem;
+  }
+
+  .referral-header-content {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .referral-title {
+    font-size: 2rem;
+    text-align: center;
+  }
+
+  .stats-grid {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .referral-section {
+    padding: 1.5rem;
+  }
+
+  .commissions-table {
+    font-size: 0.875rem;
+  }
+
+  .commissions-table th,
+  .commissions-table td {
+    padding: 0.75rem 0.5rem;
+  }
+
+  /* Hacer la tabla scrolleable horizontalmente en móvil */
+  .table-container {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Animación del gradiente (heredada del CSS global) */
+@keyframes gradientMove {
+  0% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+  100% {
+    background-position: 0% 50%;
+  }
+}

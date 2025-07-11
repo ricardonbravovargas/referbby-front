@@ -1,0 +1,524 @@
+/* Modern MercadoPago Checkout Styles */
+.mercadopago-checkout-form {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 0;
+  background: transparent;
+  border-radius: 0;
+  box-shadow: none;
+  border: none;
+  position: relative;
+}
+
+/* Main container with MercadoPago-themed glass morphism */
+.mercadopago-checkout-form::before {
+  content: "";
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 158, 227, 0.08),
+    rgba(0, 132, 199, 0.05)
+  );
+  backdrop-filter: blur(20px);
+  border-radius: 24px;
+  border: 1px solid rgba(0, 158, 227, 0.15);
+  z-index: -1;
+  box-shadow: 0 20px 60px rgba(0, 158, 227, 0.15);
+}
+
+/* Section styling with MercadoPago branding */
+.customer-info {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(255, 255, 255, 0.85)
+  );
+  backdrop-filter: blur(15px);
+  border: 1px solid rgba(0, 158, 227, 0.2);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 1.5rem;
+  box-shadow: 0 8px 32px rgba(0, 158, 227, 0.12);
+  position: relative;
+  overflow: hidden;
+}
+
+/* MercadoPago signature animation */
+.customer-info::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 3px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    #009ee3,
+    #00d4ff,
+    #009ee3,
+    transparent
+  );
+  animation: mercadopago-flow 4s infinite;
+}
+
+@keyframes mercadopago-flow {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 100%;
+  }
+}
+
+/* Enhanced header styling */
+.customer-info h3 {
+  margin-bottom: 1.5rem;
+  color: #1e293b;
+  font-size: 1.4rem;
+  font-weight: 700;
+  position: relative;
+  padding-left: 1.2rem;
+  display: flex;
+  align-items: center;
+}
+
+.customer-info h3::before {
+  content: "🚚";
+  position: absolute;
+  left: 0;
+  font-size: 1.2rem;
+}
+
+/* MercadoPago title styling */
+.mercadopago-checkout-form h2 {
+  color: #009ee3 !important;
+  margin-bottom: 2rem !important;
+  text-align: center !important;
+  font-size: 1.8rem !important;
+  font-weight: 800 !important;
+  position: relative;
+  background: linear-gradient(135deg, #009ee3, #00d4ff);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.mercadopago-checkout-form h2::after {
+  content: "";
+  position: absolute;
+  bottom: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 60px;
+  height: 3px;
+  background: linear-gradient(90deg, #009ee3, #00d4ff);
+  border-radius: 2px;
+}
+
+/* Form layout improvements */
+.form-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+/* Enhanced input styling with MercadoPago theme */
+.input {
+  width: 100%;
+  padding: 1rem 1.5rem;
+  border: 2px solid rgba(0, 158, 227, 0.15);
+  border-radius: 12px;
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.9),
+    rgba(255, 255, 255, 0.7)
+  );
+  color: #1e293b;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  box-sizing: border-box;
+  margin-bottom: 0;
+  font-size: 16px;
+  font-weight: 500;
+  position: relative;
+  backdrop-filter: blur(10px);
+}
+
+.input:focus {
+  border-color: #009ee3;
+  outline: none;
+  box-shadow:
+    0 0 0 4px rgba(0, 158, 227, 0.12),
+    0 8px 25px rgba(0, 158, 227, 0.2);
+  transform: translateY(-2px);
+  background: rgba(255, 255, 255, 0.95);
+}
+
+.input::placeholder {
+  color: #64748b;
+  font-weight: 400;
+}
+
+/* Referral info with MercadoPago celebration styling */
+.referral-info {
+  background: linear-gradient(135deg, #10b981, #059669, #047857);
+  color: white;
+  padding: 1.5rem;
+  border-radius: 16px;
+  margin-bottom: 1.5rem;
+  text-align: center;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 10px 30px rgba(16, 185, 129, 0.3);
+}
+
+.referral-info::before {
+  content: "🎉";
+  position: absolute;
+  top: 1rem;
+  left: 1rem;
+  font-size: 1.5rem;
+  animation: bounce 2s infinite;
+}
+
+.referral-info::after {
+  content: "💰";
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  font-size: 1.5rem;
+  animation: bounce 2s infinite 0.5s;
+}
+
+@keyframes bounce {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-5px);
+  }
+}
+
+/* Order summary with MercadoPago premium styling */
+.order-summary {
+  background: linear-gradient(
+    145deg,
+    rgba(255, 255, 255, 0.95),
+    rgba(248, 250, 252, 0.9)
+  );
+  border: 1px solid rgba(0, 158, 227, 0.2);
+  border-radius: 20px;
+  padding: 2rem;
+  margin-bottom: 2rem;
+  backdrop-filter: blur(15px);
+  box-shadow: 0 12px 40px rgba(0, 158, 227, 0.12);
+  position: relative;
+}
+
+.order-summary::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 4px;
+  background: linear-gradient(90deg, #009ee3, #00d4ff, #0084c7, #009ee3);
+  border-radius: 20px 20px 0 0;
+  background-size: 200% 100%;
+  animation: mercadopago-gradient 3s ease infinite;
+}
+
+@keyframes mercadopago-gradient {
+  0%,
+  100% {
+    background-position: 0% 50%;
+  }
+  50% {
+    background-position: 100% 50%;
+  }
+}
+
+.order-summary h4 {
+  margin-top: 0;
+  margin-bottom: 1.5rem;
+  color: #1e293b;
+  font-size: 1.3rem;
+  font-weight: 700;
+  text-align: center;
+  position: relative;
+}
+
+.order-summary h4::before {
+  content: "📋";
+  margin-right: 0.5rem;
+}
+
+/* Summary lines with improved styling */
+.summary-line {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 0.8rem;
+  color: #475569;
+  font-weight: 500;
+  padding: 0.5rem 0;
+  position: relative;
+}
+
+.summary-line:not(:last-child):after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(0, 158, 227, 0.15),
+    transparent
+  );
+}
+
+.summary-line.total {
+  font-weight: 700;
+  font-size: 1.2rem;
+  border-top: 2px solid rgba(0, 158, 227, 0.2);
+  padding-top: 1rem;
+  margin-top: 1rem;
+  color: #009ee3;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 158, 227, 0.08),
+    rgba(0, 158, 227, 0.15),
+    rgba(0, 158, 227, 0.08)
+  );
+  border-radius: 8px;
+  padding: 1rem;
+}
+
+/* Premium MercadoPago pay button */
+.mercadopago-pay-button {
+  width: 100%;
+  background: linear-gradient(135deg, #009ee3, #0084c7, #006ba3);
+  color: white;
+  border: none;
+  padding: 1.2rem 2rem;
+  border-radius: 16px;
+  font-size: 1.2rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  margin-bottom: 1.5rem;
+  box-shadow:
+    0 8px 25px rgba(0, 158, 227, 0.3),
+    inset 0 1px 0 rgba(255, 255, 255, 0.2);
+  position: relative;
+  overflow: hidden;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.mercadopago-pay-button::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(
+    90deg,
+    transparent,
+    rgba(255, 255, 255, 0.2),
+    transparent
+  );
+  transition: left 0.5s;
+}
+
+.mercadopago-pay-button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #0084c7, #006ba3, #075985);
+  transform: translateY(-3px);
+  box-shadow:
+    0 12px 35px rgba(0, 158, 227, 0.4),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+
+.mercadopago-pay-button:hover:not(:disabled)::before {
+  left: 100%;
+}
+
+.mercadopago-pay-button:active:not(:disabled) {
+  transform: translateY(-1px);
+}
+
+.mercadopago-pay-button:disabled {
+  background: linear-gradient(135deg, #94a3b8, #64748b);
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+}
+
+/* Enhanced MercadoPago info section */
+.mercadopago-info {
+  text-align: center;
+  color: #475569;
+  background: linear-gradient(
+    135deg,
+    rgba(0, 158, 227, 0.05),
+    rgba(0, 158, 227, 0.1)
+  );
+  padding: 1.5rem;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 158, 227, 0.15);
+  position: relative;
+}
+
+.mercadopago-info::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #009ee3, #00d4ff);
+  border-radius: 16px 16px 0 0;
+}
+
+.mercadopago-info p {
+  margin: 0.5rem 0;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.mercadopago-info p:first-child {
+  font-weight: 700;
+  color: #009ee3;
+  font-size: 1rem;
+}
+
+/* Security badges */
+.mercadopago-info::after {
+  content: "🔒 SSL Secured | 🛡️ Protected | 💳 All Cards Accepted";
+  display: block;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  opacity: 0.8;
+}
+
+/* Responsive design */
+@media (max-width: 768px) {
+  .mercadopago-checkout-form {
+    margin: 1rem;
+  }
+
+  .mercadopago-checkout-form::before {
+    left: -10px;
+    right: -10px;
+    top: -10px;
+    bottom: -10px;
+  }
+
+  .customer-info {
+    padding: 1.5rem;
+  }
+
+  .form-row {
+    grid-template-columns: 1fr;
+    gap: 1rem;
+  }
+
+  .order-summary {
+    padding: 1.5rem;
+  }
+
+  .mercadopago-pay-button {
+    font-size: 1.1rem;
+    padding: 1rem 1.5rem;
+  }
+
+  .mercadopago-checkout-form h2 {
+    font-size: 1.5rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .customer-info,
+  .order-summary,
+  .mercadopago-info {
+    padding: 1.2rem;
+  }
+
+  .customer-info h3 {
+    font-size: 1.2rem;
+  }
+
+  .mercadopago-pay-button {
+    font-size: 1rem;
+  }
+
+  .mercadopago-checkout-form h2 {
+    font-size: 1.3rem !important;
+  }
+}
+
+/* Dark mode support */
+[data-theme="dark"] .mercadopago-checkout-form::before {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 158, 227, 0.15),
+    rgba(0, 158, 227, 0.08)
+  );
+  border-color: rgba(0, 158, 227, 0.2);
+}
+
+[data-theme="dark"] .customer-info,
+[data-theme="dark"] .order-summary {
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.4), rgba(0, 0, 0, 0.2));
+  border-color: rgba(0, 158, 227, 0.2);
+}
+
+[data-theme="dark"] .customer-info h3,
+[data-theme="dark"] .order-summary h4 {
+  color: #f1f5f9;
+}
+
+[data-theme="dark"] .input {
+  background: linear-gradient(145deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.1));
+  color: #f1f5f9;
+  border-color: rgba(0, 158, 227, 0.2);
+}
+
+[data-theme="dark"] .summary-line {
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .summary-line.total {
+  color: #00d4ff;
+  background: linear-gradient(
+    90deg,
+    rgba(0, 212, 255, 0.1),
+    rgba(0, 212, 255, 0.2),
+    rgba(0, 212, 255, 0.1)
+  );
+}
+
+[data-theme="dark"] .mercadopago-info {
+  background: linear-gradient(
+    135deg,
+    rgba(0, 158, 227, 0.1),
+    rgba(0, 158, 227, 0.15)
+  );
+  color: #cbd5e1;
+}
+
+[data-theme="dark"] .mercadopago-checkout-form h2 {
+  background: linear-gradient(135deg, #00d4ff, #009ee3);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}

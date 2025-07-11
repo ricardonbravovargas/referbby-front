@@ -1,0 +1,216 @@
+/* Login Page Styles */
+.login-page {
+  min-height: 100vh;
+  background: linear-gradient(
+    135deg,
+    var(--color-background) 0%,
+    var(--color-muted) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+}
+
+.login-container {
+  width: 100%;
+  max-width: 28rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/* Header */
+.login-header {
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.login-logo {
+  width: 4rem;
+  height: 4rem;
+  background-color: var(--color-primary);
+  border-radius: var(--radius-xl);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 1rem;
+  color: white;
+}
+
+.login-header h1 {
+  font-size: 1.875rem;
+  font-weight: 700;
+  margin-bottom: 0.5rem;
+}
+
+.login-header p {
+  color: var(--color-muted-foreground);
+  margin: 0;
+}
+
+/* Form Container */
+.login-form-container .card {
+  padding: 2rem;
+}
+
+.login-form {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.form-group label {
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: var(--color-foreground);
+}
+
+.password-input {
+  position: relative;
+}
+
+.password-toggle {
+  position: absolute;
+  right: 0;
+  top: 0;
+  height: 100%;
+  padding: 0 0.75rem;
+  background: none;
+  border: none;
+  color: var(--color-muted-foreground);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  transition: color 0.2s ease;
+}
+
+.password-toggle:hover {
+  color: var(--color-foreground);
+}
+
+/* Button styles for forms */
+.button-content,
+.loading-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+}
+
+.spinner {
+  width: 1rem;
+  height: 1rem;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: white;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+/* Demo Credentials */
+.demo-credentials .card {
+  padding: 1.5rem;
+}
+
+.demo-buttons {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.5rem;
+  margin-bottom: 0.75rem;
+}
+
+.demo-note {
+  text-align: center;
+  font-size: 0.75rem;
+  color: var(--color-muted-foreground);
+  margin: 0;
+}
+
+.demo-note code {
+  background-color: var(--color-muted);
+  padding: 0.125rem 0.25rem;
+  border-radius: 0.25rem;
+  font-family: monospace;
+  font-size: 0.75rem;
+}
+
+/* Footer */
+.login-footer {
+  text-align: center;
+}
+
+.login-footer p {
+  font-size: 0.875rem;
+  color: var(--color-muted-foreground);
+  margin: 0;
+}
+
+.register-link {
+  text-align: center;
+  font-size: 0.875rem;
+  color: var(--color-muted-foreground);
+  margin: 0;
+}
+
+.register-button {
+  cursor: pointer;
+  color: var(--color-primary);
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.register-button:hover {
+  color: var(--color-primary-hover);
+}
+
+/* Responsive adjustments */
+@media (max-width: 480px) {
+  .login-container {
+    max-width: 100%;
+    padding: 0 0.5rem;
+  }
+
+  .login-form-container .card,
+  .demo-credentials .card {
+    padding: 1.5rem;
+  }
+
+  .demo-buttons {
+    grid-template-columns: 1fr;
+  }
+
+  .login-header h1 {
+    font-size: 1.5rem;
+  }
+}
+
+/* Dark theme adjustments */
+[data-theme="dark"] .login-page {
+  background: linear-gradient(
+    135deg,
+    var(--color-background) 0%,
+    var(--color-muted) 100%
+  );
+}
+
+/* Animation for page load */
+.login-container {
+  animation: fadeInUp 0.5s ease-out;
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

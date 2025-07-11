@@ -1,0 +1,206 @@
+/* === MULTI IMAGE UPLOAD STYLES === */
+.multi-image-upload {
+  width: 100%;
+  margin: 1rem 0;
+}
+
+.upload-dropzone {
+  border: 2px dashed var(--card-border, #e1e5e9);
+  border-radius: 12px;
+  padding: 2rem;
+  text-align: center;
+  cursor: pointer;
+  background: var(--input-bg, #f8f9fa);
+  transition: all 0.3s ease;
+  min-height: 150px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.upload-dropzone:hover:not(.disabled) {
+  border-color: var(--accent-color, #667eea);
+  background: rgba(102, 126, 234, 0.05);
+  transform: translateY(-2px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+}
+
+.upload-dropzone.disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+  background: #f0f0f0;
+}
+
+.upload-icon {
+  color: var(--accent-color, #667eea);
+  margin-bottom: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: rgba(102, 126, 234, 0.1);
+}
+
+.upload-text {
+  color: var(--text-color, #333);
+}
+
+.upload-text p {
+  margin: 0.5rem 0;
+}
+
+.upload-text p:first-child {
+  font-weight: 600;
+  font-size: 1.1rem;
+}
+
+.upload-hint {
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+
+.upload-size-suggestion {
+  font-size: 0.9rem !important;
+  color: var(--accent-color, #667eea) !important;
+  background: rgba(102, 126, 234, 0.1);
+  padding: 8px 12px;
+  border-radius: 8px;
+  margin-top: 0.5rem !important;
+  display: inline-block;
+}
+
+/* === IMAGE PREVIEWS === */
+.image-previews {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 1rem;
+  margin: 1.5rem 0;
+  padding: 1rem;
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+  border: 1px solid var(--card-border, #e1e5e9);
+}
+
+.image-preview-item {
+  position: relative;
+  border-radius: 12px;
+  overflow: hidden;
+  background: white;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.image-preview-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.15);
+}
+
+.image-preview-item.existing {
+  border: 2px solid var(--accent-color, #667eea);
+}
+
+.preview-image {
+  width: 100%;
+  height: 120px;
+  object-fit: cover;
+  display: block;
+  border-radius: 10px;
+}
+
+.remove-image-button {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  background: rgba(244, 67, 54, 0.9);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease;
+  z-index: 10;
+}
+
+.remove-image-button:hover {
+  background: rgba(244, 67, 54, 1);
+  transform: scale(1.1);
+  box-shadow: 0 4px 15px rgba(244, 67, 54, 0.4);
+}
+
+.existing-image-label {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: rgba(102, 126, 234, 0.9);
+  color: white;
+  padding: 4px 8px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-align: center;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+/* === IMAGE COUNTER === */
+.image-counter {
+  text-align: center;
+  font-size: 0.9rem;
+  color: var(--text-color, #333);
+  opacity: 0.8;
+  padding: 0.5rem;
+  background: rgba(102, 126, 234, 0.05);
+  border-radius: 8px;
+  margin-top: 1rem;
+  font-weight: 600;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .upload-dropzone {
+    padding: 1.5rem;
+    min-height: 120px;
+  }
+
+  .image-previews {
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 0.75rem;
+    padding: 0.75rem;
+  }
+
+  .preview-image {
+    height: 100px;
+  }
+
+  .upload-text p:first-child {
+    font-size: 1rem;
+  }
+
+  .upload-hint,
+  .upload-size-suggestion {
+    font-size: 0.8rem !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .upload-dropzone {
+    padding: 1rem;
+  }
+
+  .image-previews {
+    grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+    gap: 0.5rem;
+  }
+
+  .preview-image {
+    height: 80px;
+  }
+}

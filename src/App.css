@@ -1,0 +1,38 @@
+.app {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: transparent;
+}
+
+.main-content {
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 200px); /* Ajustado para navbar + footer */
+  background: transparent;
+  position: relative;
+  z-index: 1;
+}
+
+/* Asegurar que el contenido principal tenga espacio suficiente */
+.main-content > * {
+  flex: 1;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .main-content {
+    min-height: calc(100vh - 160px); /* Ajuste para móvil */
+  }
+}
+
+@media (max-width: 480px) {
+  .main-content {
+    min-height: calc(100vh - 140px); /* Ajuste para móvil pequeño */
+  }
+}
+
+footer {
+  flex-shrink: 0;
+}
