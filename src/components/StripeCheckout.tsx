@@ -1,5 +1,4 @@
 "use client";
-
 import type React from "react";
 import { useState, useEffect } from "react";
 import { loadStripe } from "@stripe/stripe-js";
@@ -27,9 +26,10 @@ const Notification: React.FC<NotificationProps> = ({
   message,
   onClose,
 }) => {
-  const getNotificationStyles = () => {
-    const baseStyles = {
-      position: "fixed" as const,
+  // ✅ UNA SOLA función getNotificationStyles corregida
+  const getNotificationStyles = (): React.CSSProperties => {
+    const baseStyles: React.CSSProperties = {
+      position: "fixed",
       top: "20px",
       right: "20px",
       maxWidth: "400px",
@@ -48,23 +48,17 @@ const Notification: React.FC<NotificationProps> = ({
       case "success":
         return {
           ...baseStyles,
-          borderLeftWidth: "4px",
-          borderLeftStyle: "solid",
-          borderLeftColor: "#4CAF50",
+          borderLeft: "4px solid #4CAF50",
         };
       case "error":
         return {
           ...baseStyles,
-          borderLeftWidth: "4px",
-          borderLeftStyle: "solid",
-          borderLeftColor: "#f44336",
+          borderLeft: "4px solid #f44336",
         };
       case "info":
         return {
           ...baseStyles,
-          borderLeftWidth: "4px",
-          borderLeftStyle: "solid",
-          borderLeftColor: "var(--accent-color)",
+          borderLeft: "4px solid var(--accent-color)",
         };
       default:
         return baseStyles;
@@ -141,7 +135,6 @@ const useNotifications = () => {
   ) => {
     const id = Date.now().toString();
     setNotifications((prev) => [...prev, { id, type, title, message }]);
-
     setTimeout(() => {
       removeNotification(id);
     }, duration);
@@ -164,22 +157,17 @@ const getStripe = async () => {
     try {
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
       const response = await fetch(`${apiUrl}/payments/config`);
-
       if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
       }
-
       const data = await response.json();
-
       if (!data.publishableKey) {
         throw new Error("No se recibió la clave pública de Stripe");
       }
-
       stripePromise = loadStripe(data.publishableKey);
     } catch (error) {
       console.error("Error obteniendo configuración de Stripe:", error);
       const fallbackKey = import.meta.env.VITE_STRIPE_PUBLISHABLE_KEY;
-
       if (fallbackKey) {
         console.warn(
           "Usando clave de Stripe de fallback desde variables de entorno",
@@ -227,7 +215,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, onError }) => {
 
     items.forEach((item) => {
       const subtotalProducto = item.precio * item.cantidad;
-
       // Calcular IVA adicional si no está incluido
       if (item.iva && item.iva > 0 && !item.ivaIncluido) {
         const ivaProducto = (subtotalProducto * item.iva) / 100;
@@ -261,11 +248,9 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, onError }) => {
   // Función para obtener detalles de envío por empresa
   const getShippingDetails = () => {
     const empresasConEnvio = new Map();
-
     items.forEach((item) => {
       const empresaId = item.empresa?.id || "sin-empresa";
       const empresaNombre = item.empresa?.nombre || "Sin empresa";
-
       if (!empresasConEnvio.has(empresaId)) {
         if (item.envioDisponible) {
           const costo = item.costoEnvio ? Number(item.costoEnvio) : 0;
@@ -277,13 +262,11 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, onError }) => {
         }
       }
     });
-
     return Array.from(empresasConEnvio.values());
   };
 
   const handleSubmit = async (event: React.FormEvent) => {
     event.preventDefault();
-
     if (!stripe || !elements) {
       addNotification(
         "error",
@@ -326,7 +309,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, onError }) => {
 
     try {
       const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
-
       // DEBUG: Verificar qué datos de empresa tenemos
       console.log(
         "🔍 DEBUG - Items originales:",
@@ -342,7 +324,7 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, onError }) => {
         empresa: {
           id: item.empresa?.id || "sin-empresa",
           nombre: item.empresa?.nombre || "Empresa Desconocida",
-          email: item.empresa?.email || null, // Este campo es crucial para el backend
+          email: (item.empresa as any)?.email || null, // Este campo es crucial para el backend
         },
       }));
 
@@ -405,7 +387,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, onError }) => {
             message: `Error ${response.status}: ${response.statusText}`,
           };
         }
-
         throw new Error(
           errorData.message ||
             `Error ${response.status}: ${response.statusText}`,
@@ -413,7 +394,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, onError }) => {
       }
 
       const data = await response.json();
-
       if (!data.clientSecret) {
         throw new Error("No se recibió el client secret");
       }
@@ -462,7 +442,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, onError }) => {
         onError(errorMessage);
       } else if (paymentIntent?.status === "succeeded") {
         console.log("Pago exitoso:", paymentIntent);
-
         // Preparar detalles del pedido para la pantalla de éxito
         const orderDetails = {
           amount: getTotalPriceWithExtras().toFixed(2),
@@ -514,7 +493,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, onError }) => {
 
         clearCart();
         localStorage.removeItem("referredBy");
-
         // Pasar detalles del pedido a la función de éxito
         onSuccess(orderDetails);
       }
@@ -549,13 +527,11 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, onError }) => {
           onClose={() => removeNotification(notification.id)}
         />
       ))}
-
       <div className="stripe-checkout-form">
         <h2 className="stripe-title">
           <span className="stripe-icon">💳</span>
           Pagar con Stripe
         </h2>
-
         <form onSubmit={handleSubmit}>
           <div className="customer-info">
             <h3>
@@ -628,7 +604,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, onError }) => {
               className="input"
             />
           </div>
-
           <div className="payment-info">
             <h3>
               <span className="section-icon">💳</span>
@@ -643,7 +618,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, onError }) => {
                       color: "var(--input-text)",
                       "::placeholder": {
                         color: "var(--text-color)",
-                        opacity: "0.7",
                       },
                     },
                   },
@@ -651,7 +625,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, onError }) => {
               />
             </div>
           </div>
-
           {referredBy && (
             <div className="referral-info">
               <span className="referral-emoji">🎉</span>
@@ -660,13 +633,11 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, onError }) => {
               <span className="referral-emoji">💰</span>
             </div>
           )}
-
           <div className="order-summary">
             <h4>
               <span className="summary-icon">📋</span>
               Resumen del Pedido
             </h4>
-
             {/* Productos */}
             <div className="summary-line">
               <span>
@@ -675,7 +646,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, onError }) => {
               </span>
               <span>${subtotal.toFixed(2)}</span>
             </div>
-
             {/* Detalles de envío por empresa */}
             {shippingDetails.length > 0 ? (
               shippingDetails.map((shipping, index) => (
@@ -696,7 +666,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, onError }) => {
                 <span style={{ color: "#2e7d32" }}>Gratis</span>
               </div>
             )}
-
             {/* Total de envío si hay múltiples empresas */}
             {totalEnvio > 0 && (
               <div className="summary-line">
@@ -704,7 +673,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, onError }) => {
                 <span>${totalEnvio.toFixed(2)}</span>
               </div>
             )}
-
             {/* IVA adicional */}
             {totalIVA > 0 ? (
               <div className="summary-line">
@@ -717,14 +685,12 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, onError }) => {
                 <span style={{ color: "#2e7d32" }}>Incluidos</span>
               </div>
             )}
-
             {/* Total final */}
             <div className="summary-line total">
               <span>Total:</span>
               <span>${totalFinal.toFixed(2)}</span>
             </div>
           </div>
-
           <button
             type="submit"
             disabled={!stripe || processing}
@@ -748,7 +714,6 @@ const CheckoutForm: React.FC<CheckoutFormProps> = ({ onSuccess, onError }) => {
             </span>
             <div className="button-shine"></div>
           </button>
-
           <div className="stripe-info">
             <p className="security-text">
               <span className="security-icon">🔐</span>

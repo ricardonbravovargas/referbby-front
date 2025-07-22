@@ -212,7 +212,7 @@ const Privacidad: React.FC = () => {
         </div>
       </div>
 
-      <style jsx>{`
+      <style>{`
         .privacidad-page {
           min-height: 100vh;
           background: var(--bg-gradient);

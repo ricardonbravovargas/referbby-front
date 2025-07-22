@@ -1,10 +1,77 @@
 "use client";
-
 import React, { useState, useEffect } from "react";
-import { ChevronLeft, ChevronRight, ShoppingCart, Star } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { useCart } from "@/contexts/CartContext";
+import { ChevronLeft, ChevronRight, ShoppingCart, Star } from 'lucide-react';
+import { useCart } from "../context/CartContext"; // ✅ Corregido el path
+
+// ✅ Componente Button básico (reemplaza shadcn/ui)
+interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+  variant?: "default" | "ghost" | "outline";
+  size?: "default" | "sm" | "lg" | "icon";
+  children: React.ReactNode;
+}
+
+const Button: React.FC<ButtonProps> = ({ 
+  variant = "default", 
+  size = "default", 
+  className = "", 
+  children, 
+  ...props 
+}) => {
+  const baseClasses = "inline-flex items-center justify-center rounded-md font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none";
+  
+  const variantClasses = {
+    default: "bg-primary text-primary-foreground hover:bg-primary/90",
+    ghost: "hover:bg-accent hover:text-accent-foreground",
+    outline: "border border-input hover:bg-accent hover:text-accent-foreground"
+  };
+  
+  const sizeClasses = {
+    default: "h-10 py-2 px-4",
+    sm: "h-9 px-3 rounded-md",
+    lg: "h-11 px-8 rounded-md",
+    icon: "h-10 w-10"
+  };
+  
+  return (
+    <button 
+      className={`${baseClasses} ${variantClasses[variant]} ${sizeClasses[size]} ${className}`}
+      {...props}
+    >
+      {children}
+    </button>
+  );
+};
+
+// ✅ Componente Badge básico (reemplaza shadcn/ui)
+interface BadgeProps extends React.HTMLAttributes<HTMLDivElement> {
+  variant?: "default" | "secondary" | "destructive" | "outline";
+  children: React.ReactNode;
+}
+
+const Badge: React.FC<BadgeProps> = ({ 
+  variant = "default", 
+  className = "", 
+  children, 
+  ...props 
+}) => {
+  const baseClasses = "inline-flex items-center rounded-full border px-2.5 py-0.5 text-xs font-semibold transition-colors focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2";
+  
+  const variantClasses = {
+    default: "border-transparent bg-primary text-primary-foreground hover:bg-primary/80",
+    secondary: "border-transparent bg-secondary text-secondary-foreground hover:bg-secondary/80",
+    destructive: "border-transparent bg-destructive text-destructive-foreground hover:bg-destructive/80",
+    outline: "text-foreground"
+  };
+  
+  return (
+    <div 
+      className={`${baseClasses} ${variantClasses[variant]} ${className}`}
+      {...props}
+    >
+      {children}
+    </div>
+  );
+};
 
 interface FeaturedProduct {
   id: string;
@@ -119,7 +186,8 @@ const AdvertisementBanner: React.FC<AdvertisementBannerProps> = ({
     setCurrentSlide(index);
   };
 
-  const handleAddToCart = (product: FeaturedProduct, e: React.MouseEvent) => {
+  // ✅ Tipado explícito para el parámetro 'e'
+  const handleAddToCart = (product: FeaturedProduct, e: React.MouseEvent<HTMLButtonElement>) => {
     e.stopPropagation();
     addToCart(product);
   };

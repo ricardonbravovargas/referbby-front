@@ -13,8 +13,13 @@
     "moduleResolution": "node",
     "jsx": "preserve",
     "resolveJsonModule": true,
+    "erasableSyntaxOnly": false,
     "isolatedModules": true,
     "noEmit": true,
-    "skipLibCheck": true
+    "skipLibCheck": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./src/*"]
+    }
   }
 }

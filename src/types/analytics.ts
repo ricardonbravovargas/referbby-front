@@ -1,4 +1,4 @@
-import { User, Producto, Empresa, UserRole } from "./user";
+import type { User, Producto, Empresa, UserRole } from "./user";
 
 export interface UserAnalytics {
   totalUsers: number;

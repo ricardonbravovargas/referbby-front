@@ -392,6 +392,7 @@ const handleSubmit = useCallback(
         ? await axios.put(url, submitData, config)
         : await axios.post(url, submitData, config);
 
+        console.log("Respuesta del servidor:", response.data);
       // Limpiar formulario y recargar
       form.reset();
       setSelectedImage(null);

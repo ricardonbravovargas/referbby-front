@@ -15,7 +15,16 @@ const apiClient = axios.create({
 // Add auth token to requests
 apiClient.interceptors.request.use((config) => {
   const authHeaders = getAuthHeaders();
-  config.headers = { ...config.headers, ...authHeaders };
+  
+  // Solución: Asignar headers individualmente
+  if (authHeaders) {
+    Object.keys(authHeaders).forEach(key => {
+      if (config.headers) {
+        config.headers[key] = authHeaders[key];
+      }
+    });
+  }
+  
   return config;
 });
 
@@ -41,7 +50,6 @@ export const api = {
   // Existing endpoints that you might already have
   getUsers: () => apiClient.get("/users"),
   getUser: (id: string) => apiClient.get(`/users/${id}`),
-
   getProducts: (filters?: any) => {
     const params = new URLSearchParams(filters).toString();
     return apiClient.get(`/productos${params ? `?${params}` : ""}`);

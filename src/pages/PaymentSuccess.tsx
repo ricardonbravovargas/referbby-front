@@ -29,8 +29,8 @@ const PaymentSuccess: React.FC = () => {
       // Parámetros de MercadoPago
       const paymentId = searchParams.get("payment_id")
       const status = searchParams.get("status")
-      const externalReference = searchParams.get("external_reference")
-      const merchantOrderId = searchParams.get("merchant_order_id")
+      // const externalReference = searchParams.get("external_reference")
+      // const merchantOrderId = searchParams.get("merchant_order_id")
 
       // Parámetros de Stripe (desde localStorage)
       const stripeSuccess = searchParams.get("stripe_success")

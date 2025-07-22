@@ -49,7 +49,6 @@ const ProductCard = memo<ProductCardProps>(
     onDelete,
     onContact,
     showActions = false,
-    userRole,
   }) => {
     const [isFlipped, setIsFlipped] = useState(false);
 

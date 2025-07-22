@@ -737,7 +737,8 @@ const Products: React.FC = () => {
                   <label>📸 Imágenes del producto</label>
                   <MultiImageUpload
                     onImagesSelect={(files) => setSelectedImages(files)}
-                    onRemoveExistingImage={(imageUrl, index) => {
+                    //aca elimine el primer parametro (imagenurl) por problemas en el build
+                    onRemoveExistingImage={(index) => {
                       if (editingProducto) {
                         alert(`Imagen ${index + 1} marcada para eliminación`)
                       }

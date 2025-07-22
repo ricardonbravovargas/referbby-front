@@ -1,15 +1,12 @@
 "use client"
-
 import type React from "react"
 import { createContext, useContext, useState, useEffect, useCallback, type ReactNode } from "react"
-
 import { getUserFromToken } from "../utils/auth"
+import type { User as BaseUser } from "../types/user" // ✅ Importar la interfaz base
 
-interface User {
-  id: string
-  name: string
-  email: string
-  role: string
+// ✅ Extender la interfaz base en lugar de redefinirla
+interface AuthUser extends BaseUser {
+  // ✅ Solo agregar propiedades adicionales que no estén en BaseUser
   empresa?: {
     id: string
     nombre: string
@@ -38,15 +35,15 @@ interface LocationInfo {
 
 interface AuthContextType {
   token: string | null
-  user: User | null
-  login: (token: string, userData: User) => void
+  user: AuthUser | null // ✅ Usar AuthUser en lugar de User
+  login: (token: string, userData: AuthUser) => void // ✅ Cambiar aquí también
   logout: () => void
   isAuthenticated: boolean
   isEmbajador: boolean
   isAdmin: boolean
   isEmpresa: boolean
   loading: boolean
-  updateUser: (userData: Partial<User>) => void
+  updateUser: (userData: Partial<AuthUser>) => void // ✅ Y aquí
   // ✅ NUEVO: Funciones para manejo de ubicación
   userLocation: LocationInfo | null
   updateUserLocation: (location: LocationInfo) => void
@@ -77,16 +74,17 @@ interface AuthProviderProps {
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [token, setToken] = useState<string | null>(null)
-  const [user, setUser] = useState<User | null>(null)
+  const [user, setUser] = useState<AuthUser | null>(null) // ✅ Cambiar tipo
   const [loading, setLoading] = useState(true)
   const [isAuthenticated, setIsAuthenticated] = useState(false)
   const [isEmbajador, setIsEmbajador] = useState(false)
   const [isAdmin, setIsAdmin] = useState(false)
   const [isEmpresa, setIsEmpresa] = useState(false)
+
   // ✅ NUEVO: Estados para ubicación
   const [userLocation, setUserLocation] = useState<LocationInfo | null>(null)
 
-  const updateUserRoles = useCallback((currentUser: User | null) => {
+  const updateUserRoles = useCallback((currentUser: AuthUser | null) => { // ✅ Cambiar tipo
     if (!currentUser) {
       setIsEmbajador(false)
       setIsAdmin(false)
@@ -147,16 +145,19 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               estimatedDelivery = "1-3 días hábiles"
             }
             break
+
           case "provincial":
             cost = shippingRates.envioProvincial
             type = "provincial"
             estimatedDelivery = "2-4 días hábiles"
             break
+
           case "nacional":
             cost = shippingRates.envioNacional
             type = "nacional"
             estimatedDelivery = "3-7 días hábiles"
             break
+
           case "internacional":
             if (shippingRates.envioInternacionalDisponible) {
               cost = shippingRates.envioInternacional
@@ -167,6 +168,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               estimatedDelivery = "Envío internacional no disponible"
             }
             break
+
           default:
             type = "no_disponible"
             estimatedDelivery = "Envío no disponible para esta ubicación"
@@ -207,19 +209,22 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     try {
       setLoading(true)
       const savedToken = localStorage.getItem("token")
+
       if (!savedToken) {
         setLoading(false)
         return
       }
 
       setToken(savedToken)
+
       // Intentar obtener usuario de localStorage primero
       const savedUser = localStorage.getItem("user")
       if (savedUser) {
         try {
-          const parsedUser = JSON.parse(savedUser)
+          const parsedUser = JSON.parse(savedUser) as AuthUser // ✅ Type assertion
           setUser(parsedUser)
           updateUserRoles(parsedUser)
+
           // ✅ NUEVO: Cargar ubicación guardada
           const savedLocation = localStorage.getItem("userLocation")
           if (savedLocation) {
@@ -230,6 +235,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
               console.error("Error cargando ubicación guardada:", error)
             }
           }
+
           setIsAuthenticated(true)
           setLoading(false)
           return
@@ -241,7 +247,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
       // Si no hay usuario guardado, obtener del token
       try {
-        const currentUser = getUserFromToken()
+        const currentUser = getUserFromToken() as AuthUser // ✅ Type assertion
         if (currentUser) {
           setUser(currentUser)
           localStorage.setItem("user", JSON.stringify(currentUser))
@@ -272,7 +278,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [initializeAuth])
 
   const login = useCallback(
-    (newToken: string, userData: User) => {
+    (newToken: string, userData: AuthUser) => { // ✅ Cambiar tipo
       try {
         localStorage.setItem("token", newToken)
         setToken(newToken)
@@ -304,7 +310,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, [updateUserRoles])
 
   const updateUser = useCallback(
-    (userData: Partial<User>) => {
+    (userData: Partial<AuthUser>) => { // ✅ Cambiar tipo
       if (user) {
         const updatedUser = { ...user, ...userData }
         setUser(updatedUser)

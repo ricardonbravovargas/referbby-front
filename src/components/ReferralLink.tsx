@@ -8,7 +8,6 @@ import {
   Share2,
   AlertCircle,
   RotateCcw,
-  ShoppingCart,
 } from "lucide-react";
 import { getUserFromToken } from "../utils/auth";
 import { useNavigate, useParams, useLocation } from "react-router-dom";
@@ -220,7 +219,7 @@ const ReferralLink: React.FC = () => {
     earnings: 0,
   });
   const [isEmbajador, setIsEmbajador] = useState(false);
-  const [generating, setGenerating] = useState(false);
+  const [, setGenerating] = useState(false);
   const navigate = useNavigate();
 
   // Hook para manejar redirecciones de enlaces cortos
@@ -260,52 +259,52 @@ const ReferralLink: React.FC = () => {
   };
 
   // Función para crear enlace corto de carrito compartido
-  const createSharedCartShortLink = async (
-    userId: string,
-    cartItems: any[],
-  ) => {
-    const shortCode = generateShortCode();
-    const baseUrl = window.location.origin;
+  // const createSharedCartShortLink = async (
+  //   userId: string,
+  //   cartItems: any[],
+  // ) => {
+  //   const shortCode = generateShortCode();
+  //   const baseUrl = window.location.origin;
 
-    try {
-      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+  //   try {
+  //     const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
 
-      // Intentar guardar en backend
-      const response = await fetch(`${apiUrl}/short-links/shared-cart`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          Authorization: `Bearer ${localStorage.getItem("token")}`,
-        },
-        body: JSON.stringify({
-          shortCode,
-          userId,
-          cartData: cartItems,
-        }),
-      });
+  //     // Intentar guardar en backend
+  //     const response = await fetch(`${apiUrl}/short-links/shared-cart`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //         Authorization: `Bearer ${localStorage.getItem("token")}`,
+  //       },
+  //       body: JSON.stringify({
+  //         shortCode,
+  //         userId,
+  //         cartData: cartItems,
+  //       }),
+  //     });
 
-      if (response.ok) {
-        return `${baseUrl}/s/${shortCode}`;
-      } else {
-        throw new Error("Error creating short link in backend");
-      }
-    } catch (error) {
-      console.warn(
-        "Backend no disponible, usando almacenamiento local:",
-        error,
-      );
+  //     if (response.ok) {
+  //       return `${baseUrl}/s/${shortCode}`;
+  //     } else {
+  //       throw new Error("Error creating short link in backend");
+  //     }
+  //   } catch (error) {
+  //     console.warn(
+  //       "Backend no disponible, usando almacenamiento local:",
+  //       error,
+  //     );
 
-      // Fallback: guardar localmente
-      const linkData = {
-        type: "shared-cart",
-        userId,
-        cartData: cartItems,
-        createdAt: new Date().toISOString(),
-      };
-      localStorage.setItem(`short_link_${shortCode}`, JSON.stringify(linkData));
-      return `${baseUrl}/s/${shortCode}`;
-    }
-  };
+  //     // Fallback: guardar localmente
+  //     const linkData = {
+  //       type: "shared-cart",
+  //       userId,
+  //       cartData: cartItems,
+  //       createdAt: new Date().toISOString(),
+  //     };
+  //     localStorage.setItem(`short_link_${shortCode}`, JSON.stringify(linkData));
+  //     return `${baseUrl}/s/${shortCode}`;
+  //   }
+  // };
 
   const generateShortReferralLink = async (userId: string) => {
     setGenerating(true);

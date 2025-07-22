@@ -1,5 +1,4 @@
 "use client"
-
 import type React from "react"
 import { useEffect, useState, useCallback, useMemo, memo } from "react"
 import { Link, useNavigate, useLocation } from "react-router-dom"
@@ -9,17 +8,7 @@ import logoDark from "../assets/L0.png"
 import logoLight from "../assets/L0-light.png"
 import "./Navbar.css"
 
-interface User {
-  id: string
-  name?: string
-  email: string
-  role?: string
-  rol?: string
-  empresa?: {
-    id: string
-    nombre: string
-  }
-}
+// ✅ ELIMINADA: Interfaz User no utilizada
 
 const Navbar = memo(() => {
   const navigate = useNavigate()
@@ -40,9 +29,10 @@ const Navbar = memo(() => {
   // Memoizar cálculos de roles para evitar re-renders
   const userRoles = useMemo(() => {
     if (!user) return { isEmbajador: false, isAdmin: false, isEmpresa: false }
-
-    const userRole = (user.role || user.rol || "").toLowerCase()
-
+    
+    // ✅ CORREGIDO: Solo usar user.role, eliminar user.rol
+    const userRole = (user.role || "").toLowerCase()
+    
     return {
       isEmbajador: userRole === "embajador",
       isAdmin: userRole === "admin",
@@ -53,14 +43,12 @@ const Navbar = memo(() => {
   // Efecto para tema (optimizado)
   useEffect(() => {
     if (typeof window === "undefined") return
-
     document.body.setAttribute("data-theme", isDarkMode ? "dark" : "light")
   }, [isDarkMode])
 
   // Función optimizada para cambiar tema
   const toggleTheme = useCallback(() => {
     if (typeof window === "undefined") return
-
     const newMode = !isDarkMode
     setIsDarkMode(newMode)
     document.body.setAttribute("data-theme", newMode ? "dark" : "light")
@@ -70,12 +58,10 @@ const Navbar = memo(() => {
   // Función optimizada para logout
   const handleLogout = useCallback(() => {
     if (typeof window === "undefined") return
-
     // Llamar logout del contexto (que ya limpia localStorage)
     if (logout) {
       logout()
     }
-
     // Redirigir
     navigate("/login")
   }, [logout, navigate])
@@ -88,14 +74,12 @@ const Navbar = memo(() => {
         navigate("/login")
         return
       }
-
       if (!userRoles.isEmbajador) {
         alert(
           "Solo los embajadores pueden acceder al panel de referidos. Contacta con nuestro equipo para más información.",
         )
         return
       }
-
       navigate("/referidos")
     },
     [isAuthenticated, userRoles.isEmbajador, navigate],
@@ -108,7 +92,6 @@ const Navbar = memo(() => {
         navigate("/login")
         return
       }
-
       // Determinar qué tipo de estadísticas mostrar según el rol
       if (userRoles.isAdmin) {
         navigate("/estadisticas")
@@ -141,7 +124,6 @@ const Navbar = memo(() => {
         canAccess: false,
       }
     }
-
     if (userRoles.isAdmin) {
       return {
         text: "Estadísticas",
@@ -149,7 +131,6 @@ const Navbar = memo(() => {
         canAccess: true,
       }
     }
-
     if (userRoles.isEmpresa) {
       return {
         text: "Mi Empresa",
@@ -157,7 +138,6 @@ const Navbar = memo(() => {
         canAccess: true,
       }
     }
-
     return {
       text: "Estadísticas 🔒",
       color: "var(--hover-color)",
@@ -179,32 +159,27 @@ const Navbar = memo(() => {
       <Link to="/" className="logo-link">
         <img src={logoSrc || "/placeholder.svg"} alt="Logo" className="logo" />
       </Link>
-
       <ul className="nav-links">
         <li>
           <Link to="/" className={isActiveLink("/") ? "active" : ""}>
             Inicio
           </Link>
         </li>
-
         <li>
           <Link to="/products" className={isActiveLink("/products") ? "active" : ""}>
             Productos
           </Link>
         </li>
-
         <li>
           <Link to="/about" className={isActiveLink("/about") ? "active" : ""}>
             Nosotros
           </Link>
         </li>
-
         <li>
           <Link to="/contact" className={isActiveLink("/contact") ? "active" : ""}>
             Contacto
           </Link>
         </li>
-
         {/* Botón dinámico para estadísticas/referidos */}
         <li>
           {userRoles.isAdmin || userRoles.isEmpresa ? (
@@ -235,11 +210,9 @@ const Navbar = memo(() => {
             </button>
           )}
         </li>
-
         <li>
           <CartIcon />
         </li>
-
         {isAuthenticated ? (
           <>
             {user?.name && (
@@ -263,7 +236,6 @@ const Navbar = memo(() => {
             <Link to="/register">Ingresar</Link>
           </li>
         )}
-
         <li>
           <button onClick={toggleTheme} className="theme-toggle" type="button">
             {isDarkMode ? " ☀️ " : " 🌙 "}

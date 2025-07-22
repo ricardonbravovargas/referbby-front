@@ -39,7 +39,7 @@ const SharedCart: React.FC = () => {
   const [referrerId, setReferrerId] = useState<string | null>(null);
   const [sharedItems, setSharedItems] = useState<CartItem[]>([]);
   const [loaded, setLoaded] = useState(false);
-  const [showLoginMessage, setShowLoginMessage] = useState(false);
+  // const [showLoginMessage, setShowLoginMessage] = useState(false);
   const [isShortLink, setIsShortLink] = useState(false);
   const user = getUserFromToken();
   const navigate = useNavigate();

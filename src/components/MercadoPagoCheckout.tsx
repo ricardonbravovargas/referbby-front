@@ -151,6 +151,7 @@ const MercadoPagoCheckout: React.FC<MercadoPagoCheckoutProps> = ({
 
       // Redirigir directamente a MercadoPago Checkout Pro
       if (data.initPoint) {
+        onSuccess()
         window.location.href = data.initPoint;
       } else {
         throw new Error("No se pudo obtener el enlace de pago de MercadoPago");
