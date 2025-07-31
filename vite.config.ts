@@ -4,19 +4,17 @@ import react from "@vitejs/plugin-react";
 
 export default defineConfig({
   plugins: [react()],
-  resolve: {
-   alias: {
+ resolve: {
+    alias: {
       '@': '/src',
     },
   },
-  server: {
-    historyApiFallback: true, // Importante para SPA con hash
-  },
   optimizeDeps: {
-    include: ['source-map-js'], // Ensure Vite includes source-map-js
+    include: ["jwt-decode"],
   },
   build: {
-    sourcemap: true, // Enable source maps for debugging
-    chunkSizeWarningLimit: 2000,
+    commonjsOptions: {
+      transformMixedEsModules: true,
+    },
   },
 });
