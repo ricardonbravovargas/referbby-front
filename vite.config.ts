@@ -5,16 +5,18 @@ import path from "path";
 export default defineConfig({
   plugins: [react()],
   resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
+   alias: {
+      '@': '/src',
     },
+  },
+  server: {
+    historyApiFallback: true, // Importante para SPA con hash
   },
   optimizeDeps: {
-    include: ["jwt-decode"],
+    include: ['source-map-js'], // Ensure Vite includes source-map-js
   },
   build: {
-    commonjsOptions: {
-      transformMixedEsModules: true,
-    },
+    sourcemap: true, // Enable source maps for debugging
+    chunkSizeWarningLimit: 2000,
   },
 });
