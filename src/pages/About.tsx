@@ -42,7 +42,7 @@ const About: React.FC = () => {
           </div>
 
           <div className="about-card">
-            <h2>¿Por qué Referby?</h2>
+            <h2>¿Por qué Referbby?</h2>
             <p>
               Creemos en el poder de las referencias y en construir una comunidad donde todos puedan prosperar. Nuestro
               programa de embajadores no solo te permite ganar dinero, sino que también te convierte en parte de un

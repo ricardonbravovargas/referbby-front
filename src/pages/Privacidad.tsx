@@ -31,7 +31,7 @@ const Privacidad: React.FC = () => {
             </button>
           </div>
           <h1 className="privacidad-title">Términos y Condiciones</h1>
-          <p className="privacidad-subtitle">Política de Privacidad y Términos de Uso - ReferBby</p>
+          <p className="privacidad-subtitle">Política de Privacidad y Términos de Uso - Referbby</p>
         </div>
 
         {/* Contenido principal */}
