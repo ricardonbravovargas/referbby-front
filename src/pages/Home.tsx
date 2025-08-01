@@ -18,7 +18,7 @@ const Home: React.FC = () => {
               <h1>¿Quiénes Somos?</h1>
               <h2>Apoyando a las mujeres empoderadas y minorías</h2>
               <p>Descubrí productos únicos para gente única.</p>
-              <p>¿Quieres formar parte de Referby?</p>
+              <p>¿Quieres formar parte de Referbby?</p>
               <div className="hero-actions">
                 <Link to="/products" className="btn btn-primary hero-btn">
                   Ver Productos
