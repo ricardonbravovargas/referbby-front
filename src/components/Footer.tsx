@@ -7,9 +7,9 @@ const Footer: React.FC = () => {
     <footer className="footer">
       <div className="footer-container">
         <div className="footer-content">
-          {/* Sección ReferBby */}
+          {/* Sección Referbby */}
           <div className="footer-section">
-            <h3 className="footer-title">ReferBby</h3>
+            <h3 className="footer-title">Referbby</h3>
             <p className="footer-description">
               Plataforma de referidos que conecta emprendedores con oportunidades de negocio.
             </p>
