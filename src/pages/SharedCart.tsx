@@ -60,14 +60,41 @@ const SharedCart: React.FC = () => {
       ) {
         setIsShortLink(true);
         console.log("📱 Detectado enlace corto:", code);
+        try {
+          const res = await fetch(
+            `${import.meta.env.VITE_BACKEND_URL}/referrals/resolve/${code}`
+          );
+          if (res.ok) {
+            const data = await res.json();
+            console.log("✅ Código encontrado en backend:", data);
 
+            // Guardar info del referido
+            if (data.userId) {
+              setReferrerId(data.userId);
+              localStorage.setItem("referredBy", data.userId);
+            }
+
+            // Cargar carrito si el backend lo guarda
+            if (data.cartData?.length) {
+              setSharedItems(data.cartData);
+            }
+
+            return;
+          } else {
+            console.warn(
+              "⚠️ No se encontró el código en backend, intentando localStorage..."
+            );
+          }
+        } catch (err) {
+          console.error("❌ Error consultando backend:", err);
+        }
         // Buscar directamente en localStorage (el backend aún no tiene estos endpoints)
         const shortLinkData = localStorage.getItem(`short_link_${code}`);
         console.log(
           "💾 Datos en localStorage para código",
           code,
           ":",
-          shortLinkData,
+          shortLinkData
         );
 
         if (shortLinkData) {
@@ -82,7 +109,7 @@ const SharedCart: React.FC = () => {
                 localStorage.setItem("referralSource", "shared-cart");
                 localStorage.setItem(
                   "referralTimestamp",
-                  new Date().toISOString(),
+                  new Date().toISOString()
                 );
                 console.log("👤 Referidor configurado:", parsedData.userId);
               }
@@ -92,7 +119,7 @@ const SharedCart: React.FC = () => {
                 console.log(
                   "🛒 Productos cargados:",
                   parsedData.cartData.length,
-                  parsedData.cartData,
+                  parsedData.cartData
                 );
               } else {
                 console.warn("⚠️ No hay productos en el carrito compartido");
@@ -108,8 +135,8 @@ const SharedCart: React.FC = () => {
           console.log(
             "🔍 Códigos disponibles en localStorage:",
             Object.keys(localStorage).filter((key) =>
-              key.startsWith("short_link_"),
-            ),
+              key.startsWith("short_link_")
+            )
           );
         }
       } else {
@@ -202,7 +229,7 @@ const SharedCart: React.FC = () => {
   const getTotalPrice = () => {
     return sharedItems.reduce(
       (total, item) => total + item.precio * item.cantidad,
-      0,
+      0
     );
   };
 
