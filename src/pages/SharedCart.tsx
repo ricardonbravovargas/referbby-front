@@ -61,41 +61,55 @@ const SharedCart: React.FC = () => {
         setIsShortLink(true);
         console.log("📱 Detectado enlace corto:", code);
         try {
-          const res = await fetch(
-            `${import.meta.env.VITE_BACKEND_URL}/referrals/resolve/${code}`
-          );
-          if (res.ok) {
-            const data = await res.json();
+          const apiUrl =
+            import.meta.env.VITE_API_URL || "http://localhost:3000";
+          const endpoint = location.pathname.startsWith("/r/")
+            ? `${apiUrl}/referrals/resolve/${code}`
+            : `${apiUrl}/short-links/resolve/${code}`;
+
+          console.log("🔍 Consultando backend:", endpoint);
+
+          const response = await fetch(endpoint);
+
+          if (response.ok) {
+            const data = await response.json();
             console.log("✅ Código encontrado en backend:", data);
 
-            // Guardar info del referido
-            if (data.userId) {
-              setReferrerId(data.userId);
+            if (data.type === "shared-cart") {
+              // Es un carrito compartido
+              if (data.userId) {
+                localStorage.setItem("referredBy", data.userId);
+                localStorage.setItem("referralSource", "shared-cart");
+                localStorage.setItem(
+                  "referralTimestamp",
+                  new Date().toISOString()
+                );
+              }
+
+              if (data.cartData && data.cartData.length > 0) {
+                setSharedItems(data.cartData);
+                setReferrerId(data.userId);
+              }
+              setLoaded(true);
+              return;
+            } else {
+              // Es un referido simple
               localStorage.setItem("referredBy", data.userId);
+              setReferrerId(data.userId);
+              setLoaded(true);
+              return;
             }
-
-            // Cargar carrito si el backend lo guarda
-            if (data.cartData?.length) {
-              setSharedItems(data.cartData);
-            }
-
-            return;
           } else {
-            console.warn(
-              "⚠️ No se encontró el código en backend, intentando localStorage..."
-            );
+            console.warn("⚠️ Backend respondió con error:", response.status);
           }
-        } catch (err) {
-          console.error("❌ Error consultando backend:", err);
+        } catch (apiError) {
+          console.warn("⚠️ Error consultando backend:", apiError);
+          // Continuar con localStorage como fallback
         }
-        // Buscar directamente en localStorage (el backend aún no tiene estos endpoints)
+
+        // Fallback: buscar en localStorage
+        console.log("💾 Buscando en localStorage:", `short_link_${code}`);
         const shortLinkData = localStorage.getItem(`short_link_${code}`);
-        console.log(
-          "💾 Datos en localStorage para código",
-          code,
-          ":",
-          shortLinkData
-        );
 
         if (shortLinkData) {
           try {

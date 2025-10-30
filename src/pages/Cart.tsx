@@ -80,14 +80,15 @@ const Cart: React.FC = () => {
   // Función para generar enlace corto (solo localStorage por ahora)
   const generateSharedCartLink = async (
     userId: string,
-    cartItems: any[],
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    cartItems: any[]
   ): Promise<string> => {
     const generateCode = () => {
       const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
       let result = "";
       for (let i = 0; i < 6; i++) {
         result += characters.charAt(
-          Math.floor(Math.random() * characters.length),
+          Math.floor(Math.random() * characters.length)
         );
       }
       return result;
@@ -96,7 +97,6 @@ const Cart: React.FC = () => {
     const shortCode = generateCode();
     const baseUrl = window.location.origin;
 
-    // Usar directamente localStorage (el backend aún no tiene este endpoint)
     const linkData = {
       type: "shared-cart",
       userId,
@@ -104,8 +104,53 @@ const Cart: React.FC = () => {
       createdAt: new Date().toISOString(),
     };
 
+    // 1️⃣ Guardar en localStorage (fallback)
     localStorage.setItem(`short_link_${shortCode}`, JSON.stringify(linkData));
-    console.log(`📦 Enlace corto generado: ${shortCode}`, linkData);
+    console.log(`💾 Enlace guardado en localStorage: ${shortCode}`);
+
+    // 2️⃣ Intentar guardar en backend
+    try {
+      const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+      console.log(
+        `📤 Intentando guardar en backend: ${apiUrl}/short-links/shared-cart`
+      );
+      console.log(`📦 Datos a enviar:`, {
+        shortCode,
+        userId,
+        itemCount: cartItems.length,
+      });
+
+      const response = await fetch(`${apiUrl}/short-links/shared-cart`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+        body: JSON.stringify({
+          shortCode,
+          userId,
+          cartData: cartItems,
+        }),
+      });
+
+      console.log(
+        `📡 Respuesta del backend: ${response.status} ${response.statusText}`
+      );
+
+      if (response.ok) {
+        const result = await response.json();
+        console.log("✅ Enlace guardado en backend exitosamente:", result);
+      } else {
+        const errorText = await response.text();
+        console.error("❌ Backend rechazó el enlace:", {
+          status: response.status,
+          error: errorText,
+        });
+      }
+    } catch (error) {
+      console.error("❌ Error de red guardando en backend:", error);
+    }
 
     return `${baseUrl}/s/${shortCode}`;
   };
@@ -263,7 +308,27 @@ const Cart: React.FC = () => {
       >
         Carrito de Compras
       </h1>
-
+      {localStorage.getItem("referredBy") && (
+        <div
+          style={{
+            background: "rgba(34, 197, 94, 0.1)",
+            border: "2px solid #22c55e",
+            borderRadius: "12px",
+            padding: "1rem",
+            marginBottom: "2rem",
+            textAlign: "center",
+          }}
+        >
+          <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>🎉</div>
+          <h3 style={{ color: "#22c55e", margin: "0 0 0.5rem 0" }}>
+            ¡Compra Referida!
+          </h3>
+          <p style={{ color: "var(--text-color)", margin: 0 }}>
+            Un amigo te ha compartido su carrito. Si completas esta compra, tu
+            amigo recibirá una comisión del 10%.
+          </p>
+        </div>
+      )}
       <div
         style={{
           background: "var(--card-bg)",
@@ -690,7 +755,7 @@ const Cart: React.FC = () => {
                 e.preventDefault();
                 if (
                   window.confirm(
-                    "¿Estás seguro de que quieres vaciar el carrito?",
+                    "¿Estás seguro de que quieres vaciar el carrito?"
                   )
                 ) {
                   clearCart();

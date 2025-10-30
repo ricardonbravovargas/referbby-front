@@ -1,89 +1,206 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState } from "react"
-import { useCart } from "../context/CartContext"
-import { getUserFromToken } from "../utils/auth"
-import StripeCheckout from "../components/StripeCheckout"
-import MercadoPagoCheckout from "../components/MercadoPagoCheckout"
-import "../styles/global.css"
+import type React from "react";
+import { useState } from "react";
+import { useCart } from "../context/CartContext";
+import { getUserFromToken } from "../utils/auth";
+import "../styles/global.css";
+
+interface CartItem {
+  id: string;
+  nombre: string;
+  precio: number;
+  cantidad: number;
+  imagen?: string;
+  empresa?: {
+    id: string;
+    nombre: string;
+  };
+  iva?: number;
+  ivaIncluido?: boolean;
+  envioDisponible?: boolean;
+  costoEnvio?: number;
+}
 
 const Checkout: React.FC = () => {
-  const { items, getTotalPrice } = useCart()
-  const [paymentSuccess, setPaymentSuccess] = useState(false)
-  const [paymentError, setPaymentError] = useState<string | null>(null)
-  const [orderDetails, setOrderDetails] = useState<any>(null)
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<"stripe" | "mercadopago">("stripe")
-  const user = getUserFromToken()
+  const { items, clearCart, getTotalPrice } = useCart();
+  const [loading, setLoading] = useState(false);
+  const user = getUserFromToken();
 
   // Función para calcular costos adicionales
   const calculateAdditionalCosts = () => {
-    let totalIVA = 0
-    let totalEnvio = 0
-    const productosConEnvio = new Set<string>() // Para evitar duplicar envío por empresa
+    let totalIVA = 0;
+    let totalEnvio = 0;
+    const productosConEnvio = new Set<string>();
 
-    items.forEach((item) => {
-      const subtotalProducto = item.precio * item.cantidad
+    items.forEach((item: CartItem) => {
+      const subtotalProducto = item.precio * item.cantidad;
 
-      // Calcular IVA adicional si no está incluido
       if (item.iva && item.iva > 0 && !item.ivaIncluido) {
-        const ivaProducto = (subtotalProducto * item.iva) / 100
-        totalIVA += ivaProducto
+        const ivaProducto = (subtotalProducto * item.iva) / 100;
+        totalIVA += ivaProducto;
       }
 
-      // Calcular envío si no es gratis (una vez por empresa)
-      if (item.envioDisponible && item.costoEnvio && Number(item.costoEnvio) > 0) {
-        const empresaId = item.empresa?.id || "sin-empresa"
+      if (
+        item.envioDisponible &&
+        item.costoEnvio &&
+        Number(item.costoEnvio) > 0
+      ) {
+        const empresaId = item.empresa?.id || "sin-empresa";
         if (!productosConEnvio.has(empresaId)) {
-          totalEnvio += Number(item.costoEnvio)
-          productosConEnvio.add(empresaId)
+          totalEnvio += Number(item.costoEnvio);
+          productosConEnvio.add(empresaId);
         }
       }
-    })
+    });
 
-    return { totalIVA, totalEnvio }
-  }
+    return { totalIVA, totalEnvio };
+  };
 
-  // Función para obtener el precio total incluyendo IVA y envío
   const getTotalPriceWithExtras = () => {
-    const subtotal = getTotalPrice()
-    const { totalIVA, totalEnvio } = calculateAdditionalCosts()
-    return subtotal + totalIVA + totalEnvio
-  }
+    const subtotal = getTotalPrice();
+    const { totalIVA, totalEnvio } = calculateAdditionalCosts();
+    return subtotal + totalIVA + totalEnvio;
+  };
 
-  // Función para obtener detalles de envío por empresa
   const getShippingDetails = () => {
-    const empresasConEnvio = new Map<string, { nombre: string; costo: number; gratis: boolean }>()
+    const empresasConEnvio = new Map<
+      string,
+      { nombre: string; costo: number; gratis: boolean }
+    >();
 
-    items.forEach((item) => {
-      const empresaId = item.empresa?.id || "sin-empresa"
-      const empresaNombre = item.empresa?.nombre || "Sin empresa"
+    items.forEach((item: CartItem) => {
+      const empresaId = item.empresa?.id || "sin-empresa";
+      const empresaNombre = item.empresa?.nombre || "Sin empresa";
 
       if (!empresasConEnvio.has(empresaId)) {
         if (item.envioDisponible) {
-          const costo = item.costoEnvio ? Number(item.costoEnvio) : 0
+          const costo = item.costoEnvio ? Number(item.costoEnvio) : 0;
           empresasConEnvio.set(empresaId, {
             nombre: empresaNombre,
             costo: costo,
             gratis: costo === 0,
-          })
+          });
         }
       }
-    })
+    });
 
-    return Array.from(empresasConEnvio.values())
-  }
+    return Array.from(empresasConEnvio.values());
+  };
 
+  // 🛒 FUNCIÓN PRINCIPAL: Procesar compra
+  const handlePurchase = async () => {
+    if (!user) {
+      alert("Debes iniciar sesión para comprar");
+      window.location.href = "/login";
+      return;
+    }
+
+    if (items.length === 0) {
+      alert("Tu carrito está vacío");
+      return;
+    }
+
+    setLoading(true);
+
+    try {
+      const totalAmount = getTotalPriceWithExtras();
+      const referredBy = localStorage.getItem("referredBy");
+
+      console.log("🛒 Procesando compra:", {
+        userId: user.id,
+        userEmail: user.email,
+        totalAmount,
+        referredBy,
+        items: items.length,
+      });
+
+      // 💸 Si hay referido, crear la comisión
+      if (referredBy) {
+        try {
+          const apiUrl =
+            import.meta.env.VITE_API_URL || "http://localhost:3000";
+
+          console.log("📤 Creando comisión para referrer:", referredBy);
+
+          const response = await fetch(`${apiUrl}/referrals/commission`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer ${localStorage.getItem("token")}`,
+            },
+            body: JSON.stringify({
+              referrerId: referredBy,
+              referredUserId: user.id,
+              referredUserEmail: user.email,
+              referredUserName: user.name || user.email,
+              amount: totalAmount,
+              commission: totalAmount * 0.1,
+              paymentIntentId: `MANUAL-${Date.now()}`,
+            }),
+          });
+
+          if (response.ok) {
+            console.log("✅ Comisión creada exitosamente");
+            localStorage.removeItem("referredBy");
+            localStorage.removeItem("referralSource");
+            localStorage.removeItem("referralTimestamp");
+          } else {
+            console.error("❌ Error creando comisión");
+          }
+        } catch (error) {
+          console.error("❌ Error al crear comisión:", error);
+        }
+      }
+
+      // Limpiar carrito
+      clearCart();
+
+      // Mensaje de éxito
+      alert(
+        `✅ ¡Compra realizada con éxito!\n\n` +
+          `Total: $${totalAmount.toFixed(2)}\n` +
+          `Productos: ${items.length}\n\n` +
+          `Gracias por tu compra, ${user.name || user.email}!`
+      );
+
+      // Redirigir
+      window.location.href = "/order-success";
+    } catch (error) {
+      console.error("❌ Error procesando compra:", error);
+      alert("Error procesando la compra. Por favor intenta nuevamente.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Validaciones
   if (!user) {
     return (
       <div className="page-wrapper">
         <div className="page-content">
           <h1>Checkout</h1>
-          <div className="card" style={{ textAlign: "center", maxWidth: "500px", margin: "2rem auto" }}>
+          <div
+            className="card"
+            style={{
+              textAlign: "center",
+              maxWidth: "500px",
+              margin: "2rem auto",
+            }}
+          >
             <div style={{ fontSize: "3rem", marginBottom: "1rem" }}>🔐</div>
             <h2>Debes iniciar sesión para continuar</h2>
-            <p>Para procesar tu pago de forma segura, necesitas tener una cuenta.</p>
-            <div style={{ display: "flex", gap: "1rem", justifyContent: "center", marginTop: "2rem" }}>
+            <p>
+              Para procesar tu pago de forma segura, necesitas tener una cuenta.
+            </p>
+            <div
+              style={{
+                display: "flex",
+                gap: "1rem",
+                justifyContent: "center",
+                marginTop: "2rem",
+              }}
+            >
               <button
                 onClick={() => (window.location.href = "/login")}
                 className="btn btn-primary"
@@ -102,7 +219,7 @@ const Checkout: React.FC = () => {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
   if (items.length === 0) {
@@ -110,7 +227,14 @@ const Checkout: React.FC = () => {
       <div className="page-wrapper">
         <div className="page-content">
           <h1>Checkout</h1>
-          <div className="card" style={{ textAlign: "center", maxWidth: "500px", margin: "2rem auto" }}>
+          <div
+            className="card"
+            style={{
+              textAlign: "center",
+              maxWidth: "500px",
+              margin: "2rem auto",
+            }}
+          >
             <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>🛒</div>
             <h2>Tu carrito está vacío</h2>
             <p>Agrega algunos productos antes de proceder al pago.</p>
@@ -124,85 +248,50 @@ const Checkout: React.FC = () => {
           </div>
         </div>
       </div>
-    )
+    );
   }
 
-  if (paymentSuccess) {
-    return (
-      <div className="page-wrapper">
-        <div className="page-content">
-          <div className="card" style={{ textAlign: "center", maxWidth: "600px", margin: "2rem auto" }}>
-            <div style={{ fontSize: "4rem", marginBottom: "1rem" }}>✅</div>
-            <h1 style={{ color: "#4CAF50", marginBottom: "1rem" }}>¡Pago Exitoso!</h1>
-            <p style={{ fontSize: "1.1rem", marginBottom: "1rem" }}>Tu pedido ha sido procesado correctamente.</p>
-            <p style={{ marginBottom: "2rem" }}>Recibirás un email de confirmación en breve.</p>
-
-            {orderDetails && (
-              <div
-                style={{
-                  background: "var(--card-bg)",
-                  border: "1px solid var(--card-border)",
-                  borderRadius: "8px",
-                  padding: "1rem",
-                  marginBottom: "2rem",
-                  textAlign: "left",
-                }}
-              >
-                <h3>Detalles del Pedido</h3>
-                <p>
-                  <strong>Total pagado:</strong> ${orderDetails.amount}
-                </p>
-                <p>
-                  <strong>ID de transacción:</strong> {orderDetails.transactionId}
-                </p>
-                <p>
-                  <strong>Método de pago:</strong> {orderDetails.paymentMethod}
-                </p>
-              </div>
-            )}
-
-            <div style={{ display: "flex", gap: "1rem", justifyContent: "center" }}>
-              <button
-                onClick={() => (window.location.href = "/products")}
-                className="btn btn-primary"
-                style={{ padding: "12px 24px" }}
-              >
-                Continuar Comprando
-              </button>
-              <button
-                onClick={() => (window.location.href = "/")}
-                className="btn btn-secondary"
-                style={{ padding: "12px 24px" }}
-              >
-                Ir al Inicio
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-    )
-  }
-
-  const handlePaymentSuccess = (paymentMethod: string) => {
-    setOrderDetails({
-      amount: getTotalPriceWithExtras().toFixed(2),
-      transactionId: Date.now().toString(),
-      paymentMethod: paymentMethod === "stripe" ? "Stripe" : "MercadoPago",
-    })
-    setPaymentSuccess(true)
-  }
-
-  const { totalIVA, totalEnvio } = calculateAdditionalCosts()
-  const shippingDetails = getShippingDetails()
-  const subtotal = getTotalPrice()
-  const totalFinal = getTotalPriceWithExtras()
+  const { totalIVA, totalEnvio } = calculateAdditionalCosts();
+  const shippingDetails = getShippingDetails();
+  const subtotal = getTotalPrice();
+  const totalFinal = getTotalPriceWithExtras();
+  const referredBy = localStorage.getItem("referredBy");
 
   return (
     <div className="page-wrapper">
       <div className="page-content">
         <h1>Checkout</h1>
 
-        <div style={{ display: "flex", gap: "2rem", flexWrap: "wrap", alignItems: "flex-start" }}>
+        {/* Banner de referido */}
+        {referredBy && (
+          <div
+            style={{
+              background: "rgba(34, 197, 94, 0.1)",
+              border: "2px solid #22c55e",
+              borderRadius: "12px",
+              padding: "1rem",
+              marginBottom: "2rem",
+              textAlign: "center",
+            }}
+          >
+            <div style={{ fontSize: "2rem", marginBottom: "0.5rem" }}>🎉</div>
+            <h3 style={{ color: "#22c55e", margin: "0 0 0.5rem 0" }}>
+              ¡Compra Referida!
+            </h3>
+            <p style={{ margin: 0 }}>
+              Esta compra fue referida. Tu amigo recibirá una comisión del 10%.
+            </p>
+          </div>
+        )}
+
+        <div
+          style={{
+            display: "flex",
+            gap: "2rem",
+            flexWrap: "wrap",
+            alignItems: "flex-start",
+          }}
+        >
           {/* Resumen del pedido */}
           <div style={{ flex: "1", minWidth: "300px" }}>
             <div className="card">
@@ -220,65 +309,66 @@ const Checkout: React.FC = () => {
                     }}
                   >
                     <div style={{ flex: 1 }}>
-                      <h4 style={{ margin: "0 0 0.25rem 0", fontSize: "1rem" }}>{item.nombre}</h4>
-                      <p style={{ margin: "0 0 0.25rem 0", fontSize: "0.9rem", opacity: 0.7 }}>
+                      <h4 style={{ margin: "0 0 0.25rem 0", fontSize: "1rem" }}>
+                        {item.nombre}
+                      </h4>
+                      <p
+                        style={{
+                          margin: "0 0 0.25rem 0",
+                          fontSize: "0.9rem",
+                          opacity: 0.7,
+                        }}
+                      >
                         Cantidad: {item.cantidad} × ${item.precio.toFixed(2)}
                       </p>
                       {item.empresa && (
-                        <p style={{ margin: "0 0 0.25rem 0", fontSize: "0.8rem", opacity: 0.6 }}>
+                        <p
+                          style={{
+                            margin: "0 0 0.25rem 0",
+                            fontSize: "0.8rem",
+                            opacity: 0.6,
+                          }}
+                        >
                           Por: {item.empresa.nombre}
                         </p>
                       )}
-
-                      {/* Información adicional del producto */}
-                      <div style={{ fontSize: "0.75rem", opacity: 0.7, marginTop: "0.25rem" }}>
-                        {item.iva && item.iva > 0 && (
-                          <span
-                            style={{
-                              background: item.ivaIncluido ? "#e8f5e8" : "#fff3cd",
-                              color: item.ivaIncluido ? "#2e7d32" : "#856404",
-                              padding: "1px 4px",
-                              borderRadius: "3px",
-                              marginRight: "0.5rem",
-                              fontSize: "0.7rem",
-                            }}
-                          >
-                            IVA {item.iva}% {item.ivaIncluido ? "incluido" : "no incluido"}
-                          </span>
-                        )}
-                        {item.envioDisponible && (
-                          <span
-                            style={{
-                              background: item.costoEnvio && Number(item.costoEnvio) > 0 ? "#e3f2fd" : "#e8f5e8",
-                              color: item.costoEnvio && Number(item.costoEnvio) > 0 ? "#1565c0" : "#2e7d32",
-                              padding: "1px 4px",
-                              borderRadius: "3px",
-                              fontSize: "0.7rem",
-                            }}
-                          >
-                            {item.costoEnvio && Number(item.costoEnvio) > 0
-                              ? `Envío $${Number(item.costoEnvio).toFixed(2)}`
-                              : "Envío gratis"}
-                          </span>
-                        )}
-                      </div>
                     </div>
-                    <p style={{ margin: 0, fontWeight: "bold", fontSize: "1rem" }}>
+                    <p
+                      style={{
+                        margin: 0,
+                        fontWeight: "bold",
+                        fontSize: "1rem",
+                      }}
+                    >
                       ${(item.precio * item.cantidad).toFixed(2)}
                     </p>
                   </div>
                 ))}
               </div>
 
-              <div style={{ marginTop: "1rem", paddingTop: "1rem", borderTop: "2px solid var(--card-border)" }}>
-                {/* Subtotal de productos */}
-                <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                  <span>Subtotal ({items.reduce((total, item) => total + item.cantidad, 0)} productos):</span>
+              <div
+                style={{
+                  marginTop: "1rem",
+                  paddingTop: "1rem",
+                  borderTop: "2px solid var(--card-border)",
+                }}
+              >
+                <div
+                  style={{
+                    display: "flex",
+                    justifyContent: "space-between",
+                    marginBottom: "0.5rem",
+                  }}
+                >
+                  <span>
+                    Subtotal (
+                    {items.reduce((total, item) => total + item.cantidad, 0)}{" "}
+                    productos):
+                  </span>
                   <span>${subtotal.toFixed(2)}</span>
                 </div>
 
-                {/* Detalles de envío */}
-                {shippingDetails.length > 0 ? (
+                {shippingDetails.length > 0 &&
                   shippingDetails.map((shipping, index) => (
                     <div
                       key={index}
@@ -290,19 +380,18 @@ const Checkout: React.FC = () => {
                       }}
                     >
                       <span>Envío ({shipping.nombre}):</span>
-                      <span style={{ color: shipping.gratis ? "#4CAF50" : "var(--text-color)" }}>
-                        {shipping.gratis ? "Gratis" : `$${shipping.costo.toFixed(2)}`}
+                      <span
+                        style={{
+                          color: shipping.gratis ? "#4CAF50" : "inherit",
+                        }}
+                      >
+                        {shipping.gratis
+                          ? "Gratis"
+                          : `$${shipping.costo.toFixed(2)}`}
                       </span>
                     </div>
-                  ))
-                ) : (
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
-                    <span>Envío:</span>
-                    <span style={{ color: "#4CAF50" }}>Gratis</span>
-                  </div>
-                )}
+                  ))}
 
-                {/* Total de envío */}
                 {totalEnvio > 0 && (
                   <div
                     style={{
@@ -317,20 +406,30 @@ const Checkout: React.FC = () => {
                   </div>
                 )}
 
-                {/* IVA adicional */}
                 {totalIVA > 0 ? (
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
                     <span>IVA adicional:</span>
                     <span>${totalIVA.toFixed(2)}</span>
                   </div>
                 ) : (
-                  <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "0.5rem" }}>
+                  <div
+                    style={{
+                      display: "flex",
+                      justifyContent: "space-between",
+                      marginBottom: "0.5rem",
+                    }}
+                  >
                     <span>Impuestos:</span>
                     <span>Incluidos</span>
                   </div>
                 )}
 
-                {/* Total final */}
                 <div
                   style={{
                     display: "flex",
@@ -343,7 +442,9 @@ const Checkout: React.FC = () => {
                   }}
                 >
                   <span>Total:</span>
-                  <span style={{ color: "var(--accent-color)" }}>${totalFinal.toFixed(2)}</span>
+                  <span style={{ color: "var(--accent-color)" }}>
+                    ${totalFinal.toFixed(2)}
+                  </span>
                 </div>
               </div>
             </div>
@@ -361,110 +462,42 @@ const Checkout: React.FC = () => {
                 cursor: "pointer",
                 transition: "all 0.3s ease",
               }}
-              onMouseOver={(e) => {
-                e.currentTarget.style.background = "var(--card-border)"
-              }}
-              onMouseOut={(e) => {
-                e.currentTarget.style.background = "transparent"
-              }}
             >
               ← Volver al Carrito
             </button>
           </div>
 
-          {/* Formulario de pago */}
-          <div style={{ flex: "2", minWidth: "400px" }}>
-            {paymentError && (
-              <div
+          {/* Botón de compra */}
+          <div style={{ flex: "1", minWidth: "300px" }}>
+            <div className="card">
+              <h2 style={{ marginTop: 0 }}>Finalizar Compra</h2>
+              <p style={{ marginBottom: "2rem", opacity: 0.8 }}>
+                Haz clic en el botón para confirmar tu compra.
+              </p>
+
+              <button
+                onClick={handlePurchase}
+                disabled={loading}
+                className="btn btn-primary"
                 style={{
-                  background: "#ffebee",
-                  color: "#c62828",
-                  padding: "1rem",
-                  borderRadius: "8px",
-                  marginBottom: "1rem",
-                  borderLeft: "4px solid #c62828",
+                  width: "100%",
+                  padding: "1.5rem",
+                  fontSize: "1.2rem",
+                  fontWeight: "bold",
+                  opacity: loading ? 0.6 : 1,
+                  cursor: loading ? "not-allowed" : "pointer",
                 }}
               >
-                <p style={{ margin: 0, fontWeight: "bold" }}>Error en el pago:</p>
-                <p style={{ margin: "0.5rem 0 0 0" }}>{paymentError}</p>
-                <button
-                  onClick={() => setPaymentError(null)}
-                  style={{
-                    background: "transparent",
-                    border: "none",
-                    color: "#c62828",
-                    cursor: "pointer",
-                    textDecoration: "underline",
-                    marginTop: "0.5rem",
-                  }}
-                >
-                  Intentar nuevamente
-                </button>
-              </div>
-            )}
-
-            {/* Selector de método de pago */}
-            <div className="card" style={{ marginBottom: "1rem" }}>
-              <h3 style={{ marginTop: 0 }}>Método de Pago</h3>
-              <div style={{ display: "flex", gap: "1rem", marginBottom: "1rem" }}>
-                <button
-                  onClick={() => setSelectedPaymentMethod("stripe")}
-                  style={{
-                    flex: 1,
-                    padding: "1rem",
-                    border: `2px solid ${selectedPaymentMethod === "stripe" ? "var(--accent-color)" : "var(--card-border)"}`,
-                    borderRadius: "8px",
-                    background: selectedPaymentMethod === "stripe" ? "var(--accent-color)" : "transparent",
-                    color: selectedPaymentMethod === "stripe" ? "white" : "var(--text-color)",
-                    cursor: "pointer",
-                    transition: "all 0.3s ease",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "0.5rem",
-                  }}
-                >
-                  💳 Stripe
-                </button>
-                <button
-                  onClick={() => setSelectedPaymentMethod("mercadopago")}
-                  style={{
-                    flex: 1,
-                    padding: "1rem",
-                    border: `2px solid ${selectedPaymentMethod === "mercadopago" ? "#009ee3" : "var(--card-border)"}`,
-                    borderRadius: "8px",
-                    background: selectedPaymentMethod === "mercadopago" ? "#009ee3" : "transparent",
-                    color: selectedPaymentMethod === "mercadopago" ? "white" : "var(--text-color)",
-                    cursor: "pointer",
-                    transition: "all 0.3s ease",
-                    display: "flex",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    gap: "0.5rem",
-                  }}
-                >
-                  🛒 MercadoPago
-                </button>
-              </div>
+                {loading
+                  ? "Procesando..."
+                  : `💳 Confirmar Compra - $${totalFinal.toFixed(2)}`}
+              </button>
             </div>
-
-            {/* Componente de pago según la selección */}
-            {selectedPaymentMethod === "stripe" ? (
-              <StripeCheckout
-                onSuccess={() => handlePaymentSuccess("stripe")}
-                onError={(error) => setPaymentError(error)}
-              />
-            ) : (
-              <MercadoPagoCheckout
-                onSuccess={() => handlePaymentSuccess("mercadopago")}
-                onError={(error) => setPaymentError(error)}
-              />
-            )}
           </div>
         </div>
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Checkout
+export default Checkout;
