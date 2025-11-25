@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import api from "axios";
+import api from "../api/axios";
 import "../styles/auth.css";
 import Notification from "../components/Notification";
 import { useAuth } from "../context/AuthContext";

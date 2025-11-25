@@ -3,14 +3,14 @@
 // Función para generar enlace corto
 async function generateShortCartLink(
   userId: string,
-  cartItems: any[],
+  cartItems: any[]
 ): Promise<string> {
   const generateCode = () => {
     const characters = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
     let result = "";
     for (let i = 0; i < 6; i++) {
       result += characters.charAt(
-        Math.floor(Math.random() * characters.length),
+        Math.floor(Math.random() * characters.length)
       );
     }
     return result;
@@ -68,7 +68,7 @@ window.addEventListener("DOMContentLoaded", () => {
     ) {
       // Extraer información del enlace largo
       const urlMatch = message.match(
-        /http:\/\/localhost:5173\/cart\/shared\?ref=([^&]+)&cart=(.+)/,
+        /http:\/\/localhost:5173\/cart\/shared\?ref=([^&]+)&cart=(.+)/
       );
 
       if (urlMatch) {
@@ -117,7 +117,7 @@ if (originalWriteText) {
     // Si se intenta copiar un enlace largo, convertirlo primero
     if (text.includes("/cart/shared?ref=")) {
       const urlMatch = text.match(
-        /http:\/\/localhost:5173\/cart\/shared\?ref=([^&]+)&cart=(.+)/,
+        /http:\/\/localhost:5173\/cart\/shared\?ref=([^&]+)&cart=(.+)/
       );
 
       if (urlMatch) {
@@ -147,5 +147,3 @@ if (originalWriteText) {
     return originalWriteText.call(navigator.clipboard, text);
   };
 }
-
-console.log("✅ Interceptor de enlaces largos activado");

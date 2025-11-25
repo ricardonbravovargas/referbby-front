@@ -81,7 +81,6 @@ const Register = () => {
         direccion: direccion.trim() || undefined,
       };
 
-      console.log("Datos de registro:", registerData);
       const registerResponse = await api.post("/auth/register", registerData);
       console.log("Usuario registrado:", registerResponse.data);
 
