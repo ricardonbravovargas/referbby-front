@@ -1,9 +1,9 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import axios from "axios";
+import api from "axios";
 import "../styles/auth.css";
 import Notification from "../components/Notification";
-import { useAuth } from '../context/AuthContext';
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const { login } = useAuth();
@@ -21,8 +21,8 @@ const Login = () => {
     setError(null);
     setSuccess(null);
     try {
-      const response = await axios.post("http://localhost:3000/auth/login", form);
-      
+      const response = await api.post("/auth/login", form);
+
       // Guardar token para persistencia
       localStorage.setItem("token", response.data.access_token);
 
@@ -37,8 +37,9 @@ const Login = () => {
 
       // Redirigir después de 1.5 segundos
       setTimeout(() => navigate("/"), 1500);
-    } catch (err: any) {
-      setError(err.response?.data?.message || "Error en el login");
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      setError(error.response?.data?.message || "Error en el login");
     }
   };
 
@@ -69,7 +70,10 @@ const Login = () => {
         <button type="submit">Entrar</button>
         <p>
           ¿No tienes cuenta?{" "}
-          <span onClick={() => navigate("/register")} style={{ cursor: "pointer", color: "blue" }}>
+          <span
+            onClick={() => navigate("/register")}
+            style={{ cursor: "pointer", color: "blue" }}
+          >
             Registrarse
           </span>
         </p>

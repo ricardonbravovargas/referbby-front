@@ -1,77 +1,79 @@
-"use client"
+"use client";
 
-import type React from "react"
-import { useState, useEffect } from "react"
-import { useAuth } from "../context/AuthContext"
-import { useNavigate } from "react-router-dom"
-import axios from "axios"
-import Notification from "../components/Notification"
-import "../styles/analytics.css"
-import "../styles/analytics-emails.css"
+import type React from "react";
+import { useState, useEffect, useCallback } from "react";
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
+import Notification from "../components/Notification";
+import "../styles/analytics.css";
+import "../styles/analytics-emails.css";
+import api from "../api/axios";
 
 // Interfaces para los datos de analytics
 interface UserLoginData {
-  id: string
-  name: string
-  email: string
-  role: string
-  lastLogin: string | null
-  createdAt: string
-  isActive: boolean
-  connectionCount?: number
+  id: string;
+  name: string;
+  email: string;
+  role: string;
+  lastLogin: string | null;
+  createdAt: string;
+  isActive: boolean;
+  connectionCount?: number;
 }
 
 interface AnalyticsStats {
-  totalUsers: number
-  activeUsers: number
-  adminUsers: number
-  empresaUsers: number
-  embajadorUsers: number
-  clienteUsers: number
+  totalUsers: number;
+  activeUsers: number;
+  adminUsers: number;
+  empresaUsers: number;
+  embajadorUsers: number;
+  clienteUsers: number;
 }
 
 interface EmailStats {
-  totalEmailsSent: number
-  companyReminders: number
-  ambassadorReminders: number
-  celebrations: number
-  lastExecution: string
-  todaysSent?: number
-  thisWeekSent?: number
-  thisMonthSent?: number
+  totalEmailsSent: number;
+  companyReminders: number;
+  ambassadorReminders: number;
+  celebrations: number;
+  lastExecution: string;
+  todaysSent?: number;
+  thisWeekSent?: number;
+  thisMonthSent?: number;
 }
 
 interface ManualEmailForm {
-  type: "company" | "ambassador" | "celebration"
-  userEmail: string
-  userName?: string
+  type: "company" | "ambassador" | "celebration";
+  userEmail: string;
+  userName?: string;
 }
 
 const Analytics: React.FC = () => {
-  const { isAuthenticated, isAdmin } = useAuth()
-  const navigate = useNavigate()
+  const { isAuthenticated, isAdmin } = useAuth();
+  const navigate = useNavigate();
 
   // Estados principales
-  const [loading, setLoading] = useState(true)
-  const [users, setUsers] = useState<UserLoginData[]>([])
-  const [filteredUsers, setFilteredUsers] = useState<UserLoginData[]>([])
-  const [stats, setStats] = useState<AnalyticsStats | null>(null)
-  const [emailStats, setEmailStats] = useState<EmailStats | null>(null)
-  const [error, setError] = useState<string | null>(null)
+  const [loading, setLoading] = useState(true);
+  const [users, setUsers] = useState<UserLoginData[]>([]);
+  const [filteredUsers, setFilteredUsers] = useState<UserLoginData[]>([]);
+  const [stats, setStats] = useState<AnalyticsStats | null>(null);
+  const [emailStats, setEmailStats] = useState<EmailStats | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   // Estados para la interfaz de emails
-  const [activeTab, setActiveTab] = useState("dashboard")
-  const [emailLoading, setEmailLoading] = useState<{ [key: string]: boolean }>({})
+  const [activeTab, setActiveTab] = useState("dashboard");
+  const [emailLoading, setEmailLoading] = useState<{ [key: string]: boolean }>(
+    {}
+  );
   const [manualEmailForm, setManualEmailForm] = useState<ManualEmailForm>({
     type: "company",
     userEmail: "",
     userName: "",
-  })
-  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false)
+  });
+  const [isEmailModalOpen, setIsEmailModalOpen] = useState(false);
   const [notification, setNotification] = useState<{
-    type: "success" | "error"
-    message: string
-  } | null>(null)
+    type: "success" | "error";
+    message: string;
+  } | null>(null);
 
   // Estados de filtros
   const [filters, setFilters] = useState({
@@ -79,83 +81,50 @@ const Analytics: React.FC = () => {
     search: "",
     sortBy: "lastLogin",
     sortOrder: "desc" as "asc" | "desc",
-  })
-
-  // Configuración de API
-  const API_BASE = "http://localhost:3000"
-  const getAuthHeaders = () => {
-    const token = localStorage.getItem("token")
-    return token ? { Authorization: `Bearer ${token}` } : {}
-  }
-
-  useEffect(() => {
-    if (!isAuthenticated) {
-      navigate("/login")
-      return
-    }
-
-    if (!isAdmin) {
-      navigate("/")
-      return
-    }
-
-    fetchAllData()
-  }, [isAuthenticated, isAdmin, navigate])
-
-  useEffect(() => {
-    applyFilters()
-  }, [users, filters])
+  });
 
   // Función para mostrar notificaciones
   const showNotification = (type: "success" | "error", message: string) => {
-    setNotification({ type, message })
-    setTimeout(() => setNotification(null), 5000)
-  }
-
-  const fetchAllData = async () => {
-    setLoading(true)
-    setError(null)
-
-    try {
-      await Promise.all([fetchUsersData(), fetchEmailStats()])
-    } catch (err) {
-      console.error("Error fetching data:", err)
-      setError("Error al cargar los datos")
-    } finally {
-      setLoading(false)
-    }
-  }
+    setNotification({ type, message });
+    setTimeout(() => setNotification(null), 5000);
+  };
 
   const fetchUsersData = async () => {
     try {
-      setError(null)
-      const token = localStorage.getItem("token")
+      setError(null);
+      const token = localStorage.getItem("token");
       if (!token) {
-        throw new Error("No token found")
+        throw new Error("No token found");
       }
 
-      const response = await axios.get(`${API_BASE}/analytics/users`, {
-        headers: { Authorization: `Bearer ${token}` },
-      })
+      const response = await api.get("/analytics/users");
 
-      const usersData = response.data.users || response.data
-      const statsData = response.data.stats || response.data
+      const usersData = response.data.users || response.data;
+      const statsData = response.data.stats || response.data;
 
-      const usersArray = Array.isArray(usersData) ? usersData : []
-      setUsers(usersArray)
+      const usersArray = Array.isArray(usersData) ? usersData : [];
+      setUsers(usersArray);
 
       const calculatedStats: AnalyticsStats = {
         totalUsers: statsData?.totalUsers || usersArray.length,
-        activeUsers: statsData?.activeUsers || usersArray.filter((u) => u.isActive).length,
-        adminUsers: usersArray.filter((u) => u.role.toLowerCase() === "admin").length,
-        empresaUsers: usersArray.filter((u) => u.role.toLowerCase() === "empresa").length,
-        embajadorUsers: usersArray.filter((u) => u.role.toLowerCase() === "embajador").length,
-        clienteUsers: usersArray.filter((u) => u.role.toLowerCase() === "cliente").length,
-      }
-      setStats(calculatedStats)
+        activeUsers:
+          statsData?.activeUsers || usersArray.filter((u) => u.isActive).length,
+        adminUsers: usersArray.filter((u) => u.role.toLowerCase() === "admin")
+          .length,
+        empresaUsers: usersArray.filter(
+          (u) => u.role.toLowerCase() === "empresa"
+        ).length,
+        embajadorUsers: usersArray.filter(
+          (u) => u.role.toLowerCase() === "embajador"
+        ).length,
+        clienteUsers: usersArray.filter(
+          (u) => u.role.toLowerCase() === "cliente"
+        ).length,
+      };
+      setStats(calculatedStats);
     } catch (err) {
-      console.error("Error fetching users data:", err)
-      setError("Error al cargar los datos de usuarios")
+      console.error("Error fetching users data:", err);
+      setError("Error al cargar los datos de usuarios");
 
       // Datos de ejemplo para desarrollo
       const mockUsers: UserLoginData[] = [
@@ -199,9 +168,9 @@ const Analytics: React.FC = () => {
           isActive: true,
           connectionCount: 45,
         },
-      ]
+      ];
 
-      setUsers(mockUsers)
+      setUsers(mockUsers);
       setStats({
         totalUsers: 4,
         activeUsers: 3,
@@ -209,18 +178,16 @@ const Analytics: React.FC = () => {
         empresaUsers: 1,
         embajadorUsers: 1,
         clienteUsers: 1,
-      })
+      });
     }
-  }
+  };
 
   const fetchEmailStats = async () => {
     try {
-      const response = await axios.get(`${API_BASE}/automated-emails/stats`, {
-        headers: getAuthHeaders(),
-      })
-      setEmailStats(response.data.stats)
+      const response = await api.get("/automated-emails/stats");
+      setEmailStats(response.data.stats);
     } catch (err) {
-      console.error("Error fetching email stats:", err)
+      console.error("Error fetching email stats:", err);
       setEmailStats({
         totalEmailsSent: 156,
         companyReminders: 45,
@@ -230,110 +197,153 @@ const Analytics: React.FC = () => {
         todaysSent: 12,
         thisWeekSent: 45,
         thisMonthSent: 156,
-      })
+      });
     }
-  }
+  };
 
-  const applyFilters = () => {
-    let filtered = [...users]
+  const fetchAllData = useCallback(async () => {
+    setLoading(true);
+    setError(null);
+
+    try {
+      await Promise.all([fetchUsersData(), fetchEmailStats()]);
+    } catch (err) {
+      console.error("Error fetching data:", err);
+      setError("Error al cargar los datos");
+    } finally {
+      setLoading(false);
+    }
+  }, []);
+
+  const applyFilters = useCallback(() => {
+    let filtered = [...users];
 
     if (filters.role !== "all") {
-      filtered = filtered.filter((user) => user.role.toLowerCase() === filters.role.toLowerCase())
+      filtered = filtered.filter(
+        (user) => user.role.toLowerCase() === filters.role.toLowerCase()
+      );
     }
 
     if (filters.search) {
       filtered = filtered.filter(
         (user) =>
           user.name.toLowerCase().includes(filters.search.toLowerCase()) ||
-          user.email.toLowerCase().includes(filters.search.toLowerCase()),
-      )
+          user.email.toLowerCase().includes(filters.search.toLowerCase())
+      );
     }
 
     filtered.sort((a, b) => {
-      let aValue, bValue
+      let aValue, bValue;
 
       switch (filters.sortBy) {
         case "lastLogin":
-          aValue = a.lastLogin ? new Date(a.lastLogin).getTime() : 0
-          bValue = b.lastLogin ? new Date(b.lastLogin).getTime() : 0
-          break
+          aValue = a.lastLogin ? new Date(a.lastLogin).getTime() : 0;
+          bValue = b.lastLogin ? new Date(b.lastLogin).getTime() : 0;
+          break;
         case "createdAt":
-          aValue = new Date(a.createdAt).getTime()
-          bValue = new Date(b.createdAt).getTime()
-          break
+          aValue = new Date(a.createdAt).getTime();
+          bValue = new Date(b.createdAt).getTime();
+          break;
         case "name":
-          aValue = a.name.toLowerCase()
-          bValue = b.name.toLowerCase()
-          break
+          aValue = a.name.toLowerCase();
+          bValue = b.name.toLowerCase();
+          break;
         default:
-          return 0
+          return 0;
       }
 
       if (filters.sortOrder === "asc") {
-        return aValue > bValue ? 1 : -1
+        return aValue > bValue ? 1 : -1;
       } else {
-        return aValue < bValue ? 1 : -1
+        return aValue < bValue ? 1 : -1;
       }
-    })
+    });
 
-    setFilteredUsers(filtered)
-  }
+    setFilteredUsers(filtered);
+  }, [users, filters]);
 
-  // ✅ MEJORADO: Funciones para emails con datos reales
-  const sendEmailToUser = async (user: UserLoginData, type: "company" | "ambassador" | "celebration") => {
-    const loadingKey = `user-${type}-${user.id}`
-    setEmailLoading((prev) => ({ ...prev, [loadingKey]: true }))
+  useEffect(() => {
+    if (!isAuthenticated) {
+      navigate("/login");
+      return;
+    }
+
+    if (!isAdmin) {
+      navigate("/");
+      return;
+    }
+
+    fetchAllData();
+  }, [isAuthenticated, isAdmin, navigate, fetchAllData]);
+
+  useEffect(() => {
+    applyFilters();
+  }, [applyFilters]);
+
+  // Funciones para emails con datos reales
+  const sendEmailToUser = async (
+    user: UserLoginData,
+    type: "company" | "ambassador" | "celebration"
+  ) => {
+    const loadingKey = `user-${type}-${user.id}`;
+    setEmailLoading((prev) => ({ ...prev, [loadingKey]: true }));
 
     try {
-      // ✅ INCLUIR DATOS REALES DEL USUARIO
       const emailData = {
         type: type,
         userEmail: user.email,
         userName: user.name,
         userId: user.id,
-        // ✅ DATOS ADICIONALES PARA EMBAJADORES
         ...(type === "ambassador" && {
           lastLogin: user.lastLogin,
           connectionCount: user.connectionCount || 0,
           daysSinceLastLogin: user.lastLogin
-            ? Math.floor((Date.now() - new Date(user.lastLogin).getTime()) / (1000 * 60 * 60 * 24))
+            ? Math.floor(
+                (Date.now() - new Date(user.lastLogin).getTime()) /
+                  (1000 * 60 * 60 * 24)
+              )
             : null,
         }),
-        // ✅ DATOS ADICIONALES PARA EMPRESAS
         ...(type === "company" && {
           lastLogin: user.lastLogin,
           connectionCount: user.connectionCount || 0,
           daysSinceLastLogin: user.lastLogin
-            ? Math.floor((Date.now() - new Date(user.lastLogin).getTime()) / (1000 * 60 * 60 * 24))
+            ? Math.floor(
+                (Date.now() - new Date(user.lastLogin).getTime()) /
+                  (1000 * 60 * 60 * 24)
+              )
             : null,
         }),
-      }
+      };
 
-      await axios.post(`${API_BASE}/automated-emails/test`, emailData, {
-        headers: getAuthHeaders(),
-      })
+      await api.post("/automated-emails/test", emailData);
 
-      showNotification("success", `Email de ${type} enviado a ${user.name}`)
-    } catch (err: any) {
-      console.error("Error sending email to user:", err)
-      showNotification("error", err.response?.data?.message || "Error enviando email")
+      showNotification("success", `Email de ${type} enviado a ${user.name}`);
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      console.error("Error sending email to user:", err);
+      showNotification(
+        "error",
+        error.response?.data?.message || "Error enviando email"
+      );
     } finally {
-      setEmailLoading((prev) => ({ ...prev, [loadingKey]: false }))
+      setEmailLoading((prev) => ({ ...prev, [loadingKey]: false }));
     }
-  }
+  };
 
   const sendManualEmail = async () => {
     if (!manualEmailForm.userEmail) {
-      showNotification("error", "Email es requerido")
-      return
+      showNotification("error", "Email es requerido");
+      return;
     }
 
-    const loadingKey = `manual-${manualEmailForm.type}-${manualEmailForm.userEmail}`
-    setEmailLoading((prev) => ({ ...prev, [loadingKey]: true }))
+    const loadingKey = `manual-${manualEmailForm.type}-${manualEmailForm.userEmail}`;
+    setEmailLoading((prev) => ({ ...prev, [loadingKey]: true }));
 
     try {
-      // ✅ BUSCAR DATOS DEL USUARIO SI EXISTE EN LA LISTA
-      const foundUser = users.find((u) => u.email === manualEmailForm.userEmail)
+      const foundUser = users.find(
+        (u) => u.email === manualEmailForm.userEmail
+      );
 
       const emailData = {
         type: manualEmailForm.type,
@@ -344,56 +354,62 @@ const Analytics: React.FC = () => {
           lastLogin: foundUser.lastLogin,
           connectionCount: foundUser.connectionCount || 0,
           daysSinceLastLogin: foundUser.lastLogin
-            ? Math.floor((Date.now() - new Date(foundUser.lastLogin).getTime()) / (1000 * 60 * 60 * 24))
+            ? Math.floor(
+                (Date.now() - new Date(foundUser.lastLogin).getTime()) /
+                  (1000 * 60 * 60 * 24)
+              )
             : null,
         }),
-      }
+      };
 
-      await axios.post(`${API_BASE}/automated-emails/test`, emailData, {
-        headers: getAuthHeaders(),
-      })
-
-      showNotification("success", `Email de ${manualEmailForm.type} enviado exitosamente`)
-      setIsEmailModalOpen(false)
-      setManualEmailForm({ type: "company", userEmail: "", userName: "" })
-    } catch (err: any) {
-      console.error("Error sending manual email:", err)
-      showNotification("error", err.response?.data?.message || "Error enviando email")
-    } finally {
-      setEmailLoading((prev) => ({ ...prev, [loadingKey]: false }))
-    }
-  }
-
-  const runAutomatedChecks = async (type: "checks" | "celebrations") => {
-    const loadingKey = `automated-${type}`
-    setEmailLoading((prev) => ({ ...prev, [loadingKey]: true }))
-
-    try {
-      const endpoint = type === "checks" ? "run-checks" : "run-celebrations"
-      await axios.post(
-        `${API_BASE}/automated-emails/${endpoint}`,
-        {},
-        {
-          headers: getAuthHeaders(),
-        },
-      )
+      await api.post("/automated-emails/test", emailData);
 
       showNotification(
         "success",
-        `${type === "checks" ? "Verificaciones" : "Celebraciones"} iniciadas en segundo plano`,
-      )
-
-      setTimeout(fetchEmailStats, 2000)
-    } catch (err: any) {
-      console.error(`Error running ${type}:`, err)
-      showNotification("error", err.response?.data?.message || "Error ejecutando")
+        `Email de ${manualEmailForm.type} enviado exitosamente`
+      );
+      setIsEmailModalOpen(false);
+      setManualEmailForm({ type: "company", userEmail: "", userName: "" });
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      console.error("Error sending manual email:", err);
+      showNotification(
+        "error",
+        error.response?.data?.message || "Error enviando email"
+      );
     } finally {
-      setEmailLoading((prev) => ({ ...prev, [loadingKey]: false }))
+      setEmailLoading((prev) => ({ ...prev, [loadingKey]: false }));
     }
-  }
+  };
+
+  const runAutomatedChecks = async (type: "checks" | "celebrations") => {
+    const loadingKey = `automated-${type}`;
+    setEmailLoading((prev) => ({ ...prev, [loadingKey]: true }));
+
+    try {
+      const endpoint = type === "checks" ? "run-checks" : "run-celebrations";
+      await api.post(`/automated-emails/${endpoint}`);
+
+      showNotification(
+        "success",
+        `${type === "checks" ? "Verificaciones" : "Celebraciones"} iniciadas en segundo plano`
+      );
+
+      setTimeout(fetchEmailStats, 2000);
+    } catch (err: unknown) {
+      const error = err as { response?: { data?: { message?: string } } };
+      console.error(`Error running ${type}:`, err);
+      showNotification(
+        "error",
+        error.response?.data?.message || "Error ejecutando"
+      );
+    } finally {
+      setEmailLoading((prev) => ({ ...prev, [loadingKey]: false }));
+    }
+  };
 
   const formatDate = (dateString: string | null) => {
-    if (!dateString) return "Nunca"
+    if (!dateString) return "Nunca";
 
     return new Date(dateString).toLocaleDateString("es-ES", {
       year: "numeric",
@@ -401,58 +417,58 @@ const Analytics: React.FC = () => {
       day: "numeric",
       hour: "2-digit",
       minute: "2-digit",
-    })
-  }
+    });
+  };
 
   const getRoleColor = (role: string) => {
     switch (role.toLowerCase()) {
       case "admin":
-        return "#ef4444"
+        return "#ef4444";
       case "empresa":
-        return "#3b82f6"
+        return "#3b82f6";
       case "embajador":
-        return "#f59e0b"
+        return "#f59e0b";
       case "cliente":
-        return "#10b981"
+        return "#10b981";
       default:
-        return "#6b7280"
+        return "#6b7280";
     }
-  }
+  };
 
   const getTimeSinceLastLogin = (lastLogin: string | null) => {
-    if (!lastLogin) return "Nunca se conectó"
+    if (!lastLogin) return "Nunca se conectó";
 
-    const now = new Date()
-    const loginDate = new Date(lastLogin)
+    const now = new Date();
+    const loginDate = new Date(lastLogin);
 
     const isToday =
       loginDate.getDate() === now.getDate() &&
       loginDate.getMonth() === now.getMonth() &&
-      loginDate.getFullYear() === now.getFullYear()
+      loginDate.getFullYear() === now.getFullYear();
 
     if (isToday) {
-      return "Hoy"
+      return "Hoy";
     }
 
-    const diffTime = Math.abs(now.getTime() - loginDate.getTime())
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+    const diffTime = Math.abs(now.getTime() - loginDate.getTime());
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 
-    if (diffDays === 1) return "Ayer"
-    if (diffDays < 7) return `Hace ${diffDays} días`
-    if (diffDays < 30) return `Hace ${Math.ceil(diffDays / 7)} semanas`
-    return `Hace ${Math.ceil(diffDays / 30)} meses`
-  }
+    if (diffDays === 1) return "Ayer";
+    if (diffDays < 7) return `Hace ${diffDays} días`;
+    if (diffDays < 30) return `Hace ${Math.ceil(diffDays / 7)} semanas`;
+    return `Hace ${Math.ceil(diffDays / 30)} meses`;
+  };
 
   const shouldShowEmailButton = (user: UserLoginData, type: string) => {
-    const role = user.role.toLowerCase()
-    if (type === "company") return role === "empresa"
-    if (type === "ambassador") return role === "embajador"
-    if (type === "celebration") return role === "embajador"
-    return false
-  }
+    const role = user.role.toLowerCase();
+    if (type === "company") return role === "empresa";
+    if (type === "ambassador") return role === "embajador";
+    if (type === "celebration") return role === "embajador";
+    return false;
+  };
 
   if (!isAuthenticated || !isAdmin) {
-    return null
+    return null;
   }
 
   if (loading) {
@@ -463,14 +479,17 @@ const Analytics: React.FC = () => {
           <p>Cargando datos de usuarios...</p>
         </div>
       </div>
-    )
+    );
   }
 
   return (
     <div className="analytics-page">
       {notification && (
         <div className="notification-container">
-          <Notification type={notification.type} message={notification.message} />
+          <Notification
+            type={notification.type}
+            message={notification.message}
+          />
         </div>
       )}
 
@@ -478,7 +497,10 @@ const Analytics: React.FC = () => {
         {/* Header */}
         <div className="analytics-header">
           <h1>Panel de Administración</h1>
-          <p>Seguimiento de conexiones, actividad de usuarios y emails automáticos</p>
+          <p>
+            Seguimiento de conexiones, actividad de usuarios y emails
+            automáticos
+          </p>
         </div>
 
         {/* Navegación por pestañas */}
@@ -516,7 +538,9 @@ const Analytics: React.FC = () => {
                 <div className="stat-card">
                   <h3>Usuarios Activos</h3>
                   <div className="stat-value">{stats.activeUsers}</div>
-                  <div className="stat-description">Conectados recientemente</div>
+                  <div className="stat-description">
+                    Conectados recientemente
+                  </div>
                 </div>
                 <div className="stat-card">
                   <h3>Administradores</h3>
@@ -543,24 +567,37 @@ const Analytics: React.FC = () => {
                   <h3>📧 Estadísticas de Emails Automáticos</h3>
                   <div className="email-stats-grid">
                     <div className="email-stat">
-                      <div className="email-stat-value">{emailStats.totalEmailsSent}</div>
+                      <div className="email-stat-value">
+                        {emailStats.totalEmailsSent}
+                      </div>
                       <div className="email-stat-label">Total Enviados</div>
                     </div>
                     <div className="email-stat">
-                      <div className="email-stat-value">{emailStats.companyReminders}</div>
-                      <div className="email-stat-label">Recordatorios Empresas</div>
+                      <div className="email-stat-value">
+                        {emailStats.companyReminders}
+                      </div>
+                      <div className="email-stat-label">
+                        Recordatorios Empresas
+                      </div>
                     </div>
                     <div className="email-stat">
-                      <div className="email-stat-value">{emailStats.ambassadorReminders}</div>
-                      <div className="email-stat-label">Recordatorios Embajadores</div>
+                      <div className="email-stat-value">
+                        {emailStats.ambassadorReminders}
+                      </div>
+                      <div className="email-stat-label">
+                        Recordatorios Embajadores
+                      </div>
                     </div>
                     <div className="email-stat">
-                      <div className="email-stat-value">{emailStats.celebrations}</div>
+                      <div className="email-stat-value">
+                        {emailStats.celebrations}
+                      </div>
                       <div className="email-stat-label">Celebraciones</div>
                     </div>
                   </div>
                   <div className="email-stats-footer">
-                    <strong>Última ejecución:</strong> {formatDate(emailStats.lastExecution)}
+                    <strong>Última ejecución:</strong>{" "}
+                    {formatDate(emailStats.lastExecution)}
                   </div>
                 </div>
               </div>
@@ -576,7 +613,12 @@ const Analytics: React.FC = () => {
                 <div className="filters-grid">
                   <div className="filter-group">
                     <label>Filtrar por rol:</label>
-                    <select value={filters.role} onChange={(e) => setFilters({ ...filters, role: e.target.value })}>
+                    <select
+                      value={filters.role}
+                      onChange={(e) =>
+                        setFilters({ ...filters, role: e.target.value })
+                      }
+                    >
                       <option value="all">Todos los roles</option>
                       <option value="admin">Administradores</option>
                       <option value="empresa">Empresas</option>
@@ -591,13 +633,20 @@ const Analytics: React.FC = () => {
                       type="text"
                       placeholder="Nombre o email..."
                       value={filters.search}
-                      onChange={(e) => setFilters({ ...filters, search: e.target.value })}
+                      onChange={(e) =>
+                        setFilters({ ...filters, search: e.target.value })
+                      }
                     />
                   </div>
 
                   <div className="filter-group">
                     <label>Ordenar por:</label>
-                    <select value={filters.sortBy} onChange={(e) => setFilters({ ...filters, sortBy: e.target.value })}>
+                    <select
+                      value={filters.sortBy}
+                      onChange={(e) =>
+                        setFilters({ ...filters, sortBy: e.target.value })
+                      }
+                    >
                       <option value="lastLogin">Última conexión</option>
                       <option value="name">Nombre</option>
                       <option value="createdAt">Fecha de registro</option>
@@ -646,7 +695,11 @@ const Analytics: React.FC = () => {
                   {filteredUsers.map((user) => (
                     <div key={user.id} className="table-row">
                       <div className="user-cell">
-                        <div className="user-avatar">{(user.name || user.email || "U").charAt(0).toUpperCase()}</div>
+                        <div className="user-avatar">
+                          {(user.name || user.email || "U")
+                            .charAt(0)
+                            .toUpperCase()}
+                        </div>
                         <div className="user-details">
                           <div className="user-name">{user.name}</div>
                           <div className="user-email">{user.email}</div>
@@ -654,22 +707,33 @@ const Analytics: React.FC = () => {
                       </div>
 
                       <div className="role-cell">
-                        <span className="role-badge" style={{ backgroundColor: getRoleColor(user.role) }}>
+                        <span
+                          className="role-badge"
+                          style={{ backgroundColor: getRoleColor(user.role) }}
+                        >
                           {user.role}
                         </span>
                       </div>
 
-                      <div className="date-cell">{formatDate(user.lastLogin)}</div>
+                      <div className="date-cell">
+                        {formatDate(user.lastLogin)}
+                      </div>
 
-                      <div className="time-since-cell">{getTimeSinceLastLogin(user.lastLogin)}</div>
+                      <div className="time-since-cell">
+                        {getTimeSinceLastLogin(user.lastLogin)}
+                      </div>
 
                       <div className="status-cell">
-                        <span className={`status ${user.isActive ? "active" : "inactive"}`}>
+                        <span
+                          className={`status ${user.isActive ? "active" : "inactive"}`}
+                        >
                           {user.isActive ? "🟢 Activo" : "🔴 Inactivo"}
                         </span>
                       </div>
 
-                      <div className="date-cell">{formatDate(user.createdAt)}</div>
+                      <div className="date-cell">
+                        {formatDate(user.createdAt)}
+                      </div>
 
                       <div className="actions-cell">
                         {shouldShowEmailButton(user, "company") && (
@@ -679,27 +743,37 @@ const Analytics: React.FC = () => {
                             disabled={emailLoading[`user-company-${user.id}`]}
                             title="Enviar recordatorio de empresa"
                           >
-                            {emailLoading[`user-company-${user.id}`] ? "⏳" : "🏢"}
+                            {emailLoading[`user-company-${user.id}`]
+                              ? "⏳"
+                              : "🏢"}
                           </button>
                         )}
                         {shouldShowEmailButton(user, "ambassador") && (
                           <button
                             className="btn btn-sm btn-outline"
                             onClick={() => sendEmailToUser(user, "ambassador")}
-                            disabled={emailLoading[`user-ambassador-${user.id}`]}
+                            disabled={
+                              emailLoading[`user-ambassador-${user.id}`]
+                            }
                             title="Enviar recordatorio de embajador"
                           >
-                            {emailLoading[`user-ambassador-${user.id}`] ? "⏳" : "⭐"}
+                            {emailLoading[`user-ambassador-${user.id}`]
+                              ? "⏳"
+                              : "⭐"}
                           </button>
                         )}
                         {shouldShowEmailButton(user, "celebration") && (
                           <button
                             className="btn btn-sm btn-outline"
                             onClick={() => sendEmailToUser(user, "celebration")}
-                            disabled={emailLoading[`user-celebration-${user.id}`]}
+                            disabled={
+                              emailLoading[`user-celebration-${user.id}`]
+                            }
                             title="Enviar celebración"
                           >
-                            {emailLoading[`user-celebration-${user.id}`] ? "⏳" : "🎉"}
+                            {emailLoading[`user-celebration-${user.id}`]
+                              ? "⏳"
+                              : "🎉"}
                           </button>
                         )}
                       </div>
@@ -707,7 +781,9 @@ const Analytics: React.FC = () => {
                   ))}
 
                   {filteredUsers.length === 0 && (
-                    <div className="no-results">No se encontraron usuarios con los filtros aplicados.</div>
+                    <div className="no-results">
+                      No se encontraron usuarios con los filtros aplicados.
+                    </div>
                   )}
                 </div>
               </div>
@@ -721,13 +797,18 @@ const Analytics: React.FC = () => {
             <div className="automated-controls">
               <div className="card">
                 <h3>⏰ Verificaciones Automáticas</h3>
-                <p>Ejecutar manualmente las verificaciones de inactividad programadas.</p>
+                <p>
+                  Ejecutar manualmente las verificaciones de inactividad
+                  programadas.
+                </p>
                 <button
                   onClick={() => runAutomatedChecks("checks")}
                   disabled={emailLoading["automated-checks"]}
                   className="btn btn-primary"
                 >
-                  {emailLoading["automated-checks"] ? "⏳ Ejecutando..." : "🔄 Ejecutar Verificaciones"}
+                  {emailLoading["automated-checks"]
+                    ? "⏳ Ejecutando..."
+                    : "🔄 Ejecutar Verificaciones"}
                 </button>
               </div>
 
@@ -739,7 +820,9 @@ const Analytics: React.FC = () => {
                   disabled={emailLoading["automated-celebrations"]}
                   className="btn btn-secondary"
                 >
-                  {emailLoading["automated-celebrations"] ? "⏳ Ejecutando..." : "🎊 Ejecutar Celebraciones"}
+                  {emailLoading["automated-celebrations"]
+                    ? "⏳ Ejecutando..."
+                    : "🎊 Ejecutar Celebraciones"}
                 </button>
               </div>
             </div>
@@ -747,18 +830,33 @@ const Analytics: React.FC = () => {
             <div className="manual-email-section">
               <div className="card">
                 <h3>📧 Envío Manual de Emails</h3>
-                <p>Envía emails específicos a usuarios individuales para casos especiales o testing.</p>
+                <p>
+                  Envía emails específicos a usuarios individuales para casos
+                  especiales o testing.
+                </p>
 
-                <button onClick={() => setIsEmailModalOpen(true)} className="btn btn-primary">
+                <button
+                  onClick={() => setIsEmailModalOpen(true)}
+                  className="btn btn-primary"
+                >
                   📨 Enviar Email Manual
                 </button>
 
                 {isEmailModalOpen && (
-                  <div className="modal-overlay" onClick={() => setIsEmailModalOpen(false)}>
-                    <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+                  <div
+                    className="modal-overlay"
+                    onClick={() => setIsEmailModalOpen(false)}
+                  >
+                    <div
+                      className="modal-content"
+                      onClick={(e) => e.stopPropagation()}
+                    >
                       <div className="modal-header">
                         <h3>Enviar Email Manual</h3>
-                        <button className="modal-close" onClick={() => setIsEmailModalOpen(false)}>
+                        <button
+                          className="modal-close"
+                          onClick={() => setIsEmailModalOpen(false)}
+                        >
                           ✕
                         </button>
                       </div>
@@ -771,13 +869,19 @@ const Analytics: React.FC = () => {
                             onChange={(e) =>
                               setManualEmailForm({
                                 ...manualEmailForm,
-                                type: e.target.value as any,
+                                type: e.target.value as ManualEmailForm["type"],
                               })
                             }
                           >
-                            <option value="company">🏢 Recordatorio Empresa</option>
-                            <option value="ambassador">⭐ Recordatorio Embajador</option>
-                            <option value="celebration">🎉 Celebración Embajador</option>
+                            <option value="company">
+                              🏢 Recordatorio Empresa
+                            </option>
+                            <option value="ambassador">
+                              ⭐ Recordatorio Embajador
+                            </option>
+                            <option value="celebration">
+                              🎉 Celebración Embajador
+                            </option>
                           </select>
                         </div>
 
@@ -813,18 +917,25 @@ const Analytics: React.FC = () => {
                       </div>
 
                       <div className="modal-footer">
-                        <button onClick={() => setIsEmailModalOpen(false)} className="btn btn-outline">
+                        <button
+                          onClick={() => setIsEmailModalOpen(false)}
+                          className="btn btn-outline"
+                        >
                           Cancelar
                         </button>
                         <button
                           onClick={sendManualEmail}
                           disabled={
                             !manualEmailForm.userEmail ||
-                            emailLoading[`manual-${manualEmailForm.type}-${manualEmailForm.userEmail}`]
+                            emailLoading[
+                              `manual-${manualEmailForm.type}-${manualEmailForm.userEmail}`
+                            ]
                           }
                           className="btn btn-primary"
                         >
-                          {emailLoading[`manual-${manualEmailForm.type}-${manualEmailForm.userEmail}`]
+                          {emailLoading[
+                            `manual-${manualEmailForm.type}-${manualEmailForm.userEmail}`
+                          ]
                             ? "⏳ Enviando..."
                             : "📨 Enviar Email"}
                         </button>
@@ -848,7 +959,9 @@ const Analytics: React.FC = () => {
                   <div className="template-card">
                     <div className="template-icon">⭐</div>
                     <h4>Recordatorio Embajador</h4>
-                    <p>Enviado en días específicos (1, 3, 7, 14) de inactividad</p>
+                    <p>
+                      Enviado en días específicos (1, 3, 7, 14) de inactividad
+                    </p>
                     <small>Destinatario: Embajadores inactivos</small>
                   </div>
                   <div className="template-card">
@@ -871,7 +984,7 @@ const Analytics: React.FC = () => {
         )}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default Analytics
+export default Analytics;
