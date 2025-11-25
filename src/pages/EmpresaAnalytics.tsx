@@ -1,11 +1,10 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
 import type React from "react";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
-import axios from "axios";
+import api from "../api/axios";
 import {
   AlertCircle,
   DollarSign,
@@ -38,23 +37,7 @@ interface ProductoStats {
   ultimaVenta?: string;
 }
 
-interface VentaReciente {
-  id: string;
-  producto: {
-    id: string;
-    nombre: string;
-    precio: number;
-  };
-  cantidad: number;
-  total: number;
-  fecha: string;
-  cliente?: {
-    email: string;
-    nombre?: string;
-  };
-}
-
-// ✅ NUEVAS INTERFACES PARA ÓRDENES
+// ✅ INTERFACES PARA ÓRDENES
 interface Producto {
   id: string;
   nombre: string;
@@ -97,17 +80,16 @@ const estadosConfig: Record<
 };
 
 const EmpresaAnalytics: React.FC = () => {
-  const { isAuthenticated, user, token } = useAuth();
+  const { isAuthenticated, user } = useAuth();
   const navigate = useNavigate();
 
   // Estados existentes
   const [loading, setLoading] = useState(true);
   const [stats, setStats] = useState<EmpresaStats | null>(null);
   const [productos, setProductos] = useState<ProductoStats[]>([]);
-  const [ventasRecientes, setVentasRecientes] = useState<VentaReciente[]>([]);
   const [error, setError] = useState<string | null>(null);
 
-  // ✅ NUEVOS ESTADOS PARA ÓRDENES
+  // ✅ ESTADOS PARA ÓRDENES
   const [ordenes, setOrdenes] = useState<Orden[]>([]);
   const [estadisticasOrdenes, setEstadisticasOrdenes] =
     useState<EstadisticasOrdenes | null>(null);
@@ -119,12 +101,6 @@ const EmpresaAnalytics: React.FC = () => {
 
   // Estados para la interfaz
   const [activeTab, setActiveTab] = useState("dashboard");
-
-  // Configuración de API
-  const API_BASE = "http://localhost:3000";
-  const getAuthHeaders = () => {
-    return token ? { Authorization: `Bearer ${token}` } : {};
-  };
 
   // Verificar si el usuario es empresa
   const isEmpresa = user?.role === "empresa" || user?.empresa;
@@ -142,7 +118,7 @@ const EmpresaAnalytics: React.FC = () => {
 
     fetchAllData();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isAuthenticated, isEmpresa, navigate, token]);
+  }, [isAuthenticated, isEmpresa, navigate]);
 
   const fetchAllData = async () => {
     setLoading(true);
@@ -151,9 +127,8 @@ const EmpresaAnalytics: React.FC = () => {
       await Promise.all([
         fetchEmpresaStats(),
         fetchProductosStats(),
-        fetchVentasRecientes(),
-        fetchOrdenes(), // ✅ NUEVO
-        fetchEstadisticasOrdenes(), // ✅ NUEVO
+        fetchOrdenes(),
+        fetchEstadisticasOrdenes(),
       ]);
     } catch (err) {
       console.error("Error fetching data:", err);
@@ -166,9 +141,7 @@ const EmpresaAnalytics: React.FC = () => {
 
   const fetchEmpresaStats = async () => {
     try {
-      const response = await axios.get(`${API_BASE}/empresa/analytics/stats`, {
-        headers: getAuthHeaders(),
-      });
+      const response = await api.get("/empresa/analytics/stats");
       setStats(response.data);
     } catch (err) {
       console.error("Error fetching empresa stats:", err);
@@ -178,12 +151,7 @@ const EmpresaAnalytics: React.FC = () => {
 
   const fetchProductosStats = async () => {
     try {
-      const response = await axios.get(
-        `${API_BASE}/empresa/analytics/productos`,
-        {
-          headers: getAuthHeaders(),
-        }
-      );
+      const response = await api.get("/empresa/analytics/productos");
       setProductos(response.data);
     } catch (err) {
       console.error("Error fetching productos stats:", err);
@@ -191,28 +159,10 @@ const EmpresaAnalytics: React.FC = () => {
     }
   };
 
-  const fetchVentasRecientes = async () => {
-    try {
-      const response = await axios.get(
-        `${API_BASE}/empresa/analytics/ventas-recientes`,
-        {
-          headers: getAuthHeaders(),
-          params: { limit: 20, offset: 0 },
-        }
-      );
-      setVentasRecientes(response.data);
-    } catch (err) {
-      console.error("Error fetching ventas recientes:", err);
-      throw err;
-    }
-  };
-
-  // ✅ NUEVAS FUNCIONES PARA ÓRDENES
+  // ✅ FUNCIONES PARA ÓRDENES
   const fetchOrdenes = async () => {
     try {
-      const response = await axios.get(`${API_BASE}/ordenes`, {
-        headers: getAuthHeaders(),
-      });
+      const response = await api.get("/ordenes");
       setOrdenes(response.data);
     } catch (err) {
       console.error("Error fetching ordenes:", err);
@@ -222,9 +172,7 @@ const EmpresaAnalytics: React.FC = () => {
 
   const fetchEstadisticasOrdenes = async () => {
     try {
-      const response = await axios.get(`${API_BASE}/ordenes/estadisticas`, {
-        headers: getAuthHeaders(),
-      });
+      const response = await api.get("/ordenes/estadisticas");
       setEstadisticasOrdenes(response.data);
     } catch (err) {
       console.error("Error fetching estadisticas ordenes:", err);
@@ -234,11 +182,9 @@ const EmpresaAnalytics: React.FC = () => {
 
   const handleEstadoChange = async (ordenId: string, nuevoEstado: string) => {
     try {
-      const response = await axios.patch(
-        `${API_BASE}/ordenes/${ordenId}/estado`,
-        { estado: nuevoEstado },
-        { headers: getAuthHeaders() }
-      );
+      const response = await api.patch(`/ordenes/${ordenId}/estado`, {
+        estado: nuevoEstado,
+      });
 
       // Actualizar la lista local
       setOrdenes(
@@ -289,21 +235,6 @@ const EmpresaAnalytics: React.FC = () => {
         totalVentas: 156,
         ingresosTotales: 140398.44,
         ultimaVenta: new Date().toISOString(),
-      },
-    ]);
-
-    setVentasRecientes([
-      {
-        id: "venta-1",
-        producto: {
-          id: "prod-1",
-          nombre: "Smartphone Pro Max",
-          precio: 899.99,
-        },
-        cantidad: 1,
-        total: 899.99,
-        fecha: new Date().toISOString(),
-        cliente: { email: "cliente1@ejemplo.com", nombre: "Ana García" },
       },
     ]);
   };
@@ -400,7 +331,7 @@ const EmpresaAnalytics: React.FC = () => {
             >
               💰 Ventas
             </button>
-            {/* ✅ NUEVA PESTAÑA DE ÓRDENES */}
+            {/* ✅ PESTAÑA DE ÓRDENES */}
             <button
               className={`btn ${activeTab === "ordenes" ? "btn-primary" : ""}`}
               onClick={() => setActiveTab("ordenes")}
@@ -456,7 +387,7 @@ const EmpresaAnalytics: React.FC = () => {
                   </div>
                 </div>
 
-                {/* ✅ NUEVA CARD DE ÓRDENES */}
+                {/* ✅ CARD DE ÓRDENES */}
                 {estadisticasOrdenes && (
                   <div className="stat-card">
                     <div className="stat-icon">
@@ -544,23 +475,87 @@ const EmpresaAnalytics: React.FC = () => {
           </>
         )}
 
-        {/* Tab: Productos (sin cambios) */}
+        {/* Tab: Productos */}
         {activeTab === "productos" && (
           <div className="card">
             <h3>📦 Estadísticas de Productos</h3>
-            {/* ... código existente ... */}
+            <div style={{ padding: "1rem" }}>
+              <table style={{ width: "100%", borderCollapse: "collapse" }}>
+                <thead>
+                  <tr
+                    style={{
+                      borderBottom: "1px solid var(--analytics-border)",
+                    }}
+                  >
+                    <th style={{ padding: "0.75rem", textAlign: "left" }}>
+                      Producto
+                    </th>
+                    <th style={{ padding: "0.75rem", textAlign: "left" }}>
+                      Categoría
+                    </th>
+                    <th style={{ padding: "0.75rem", textAlign: "left" }}>
+                      Precio
+                    </th>
+                    <th style={{ padding: "0.75rem", textAlign: "left" }}>
+                      Inventario
+                    </th>
+                    <th style={{ padding: "0.75rem", textAlign: "left" }}>
+                      Ventas
+                    </th>
+                    <th style={{ padding: "0.75rem", textAlign: "left" }}>
+                      Ingresos
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {productos.map((producto) => (
+                    <tr
+                      key={producto.id}
+                      style={{
+                        borderBottom: "1px solid var(--analytics-border)",
+                      }}
+                    >
+                      <td style={{ padding: "0.75rem" }}>
+                        <div className="user-name">{producto.nombre}</div>
+                      </td>
+                      <td style={{ padding: "0.75rem" }}>
+                        {producto.categoria || "Sin categoría"}
+                      </td>
+                      <td style={{ padding: "0.75rem" }}>
+                        {formatCurrency(producto.precio)}
+                      </td>
+                      <td style={{ padding: "0.75rem" }}>
+                        <span
+                          className={`status ${producto.inventario < 5 ? "inactive" : "active"}`}
+                        >
+                          {producto.inventario}
+                        </span>
+                      </td>
+                      <td style={{ padding: "0.75rem" }}>
+                        {producto.totalVentas}
+                      </td>
+                      <td style={{ padding: "0.75rem" }}>
+                        {formatCurrency(producto.ingresosTotales)}
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
           </div>
         )}
 
-        {/* Tab: Ventas (sin cambios) */}
+        {/* Tab: Ventas */}
         {activeTab === "ventas" && (
           <div className="card">
-            <h3>💰 Ventas Recientes</h3>
-            {/* ... código existente ... */}
+            <h3>💰 Análisis de Ventas</h3>
+            <p style={{ padding: "1rem" }}>
+              Sección de análisis detallado de ventas en desarrollo...
+            </p>
           </div>
         )}
 
-        {/* ✅ NUEVO TAB: ÓRDENES */}
+        {/* ✅ TAB: ÓRDENES */}
         {activeTab === "ordenes" && (
           <>
             {/* Estadísticas de Órdenes */}
