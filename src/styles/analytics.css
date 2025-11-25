@@ -13,8 +13,10 @@
   --analytics-text: #111827;
   --analytics-text-muted: #6b7280;
   --analytics-bg: #f9fafb;
-  --analytics-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --analytics-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+  --analytics-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --analytics-shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
 }
 
 [data-theme="dark"] {
@@ -23,8 +25,10 @@
   --analytics-text: #f9fafb;
   --analytics-text-muted: #9ca3af;
   --analytics-bg: #111827;
-  --analytics-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
-  --analytics-shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
+  --analytics-shadow:
+    0 4px 6px -1px rgba(0, 0, 0, 0.3), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+  --analytics-shadow-lg:
+    0 10px 15px -3px rgba(0, 0, 0, 0.3), 0 4px 6px -2px rgba(0, 0, 0, 0.2);
 }
 
 /* Base Styles */
@@ -32,7 +36,11 @@
   background: var(--analytics-bg);
   min-height: 100vh;
   padding: 2rem 1rem;
-  font-family: "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+  font-family:
+    "Inter",
+    -apple-system,
+    BlinkMacSystemFont,
+    sans-serif;
   transition: background-color 0.3s ease;
 }
 
@@ -45,7 +53,11 @@
 
 /* Header Styles */
 .analytics-header {
-  background: linear-gradient(135deg, var(--analytics-primary) 0%, var(--analytics-secondary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--analytics-primary) 0%,
+    var(--analytics-secondary) 100%
+  );
   color: white;
   padding: 2.5rem 2rem;
   border-radius: 20px;
@@ -63,7 +75,11 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: linear-gradient(45deg, rgba(255, 255, 255, 0.1) 0%, transparent 50%);
+  background: linear-gradient(
+    45deg,
+    rgba(255, 255, 255, 0.1) 0%,
+    transparent 50%
+  );
   pointer-events: none;
 }
 
@@ -114,7 +130,11 @@
 }
 
 .tab-button.active {
-  background: linear-gradient(135deg, var(--analytics-primary) 0%, var(--analytics-primary-light) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--analytics-primary) 0%,
+    var(--analytics-primary-light) 100%
+  );
   color: white;
   border-color: var(--analytics-primary);
   box-shadow: 0 4px 15px rgba(230, 0, 184, 0.3);
@@ -158,7 +178,11 @@
 }
 
 .filters-grid .btn.btn-primary {
-  background: linear-gradient(135deg, var(--analytics-primary) 0%, var(--analytics-primary-light) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--analytics-primary) 0%,
+    var(--analytics-primary-light) 100%
+  );
   color: white;
   border-color: var(--analytics-primary);
   box-shadow: 0 4px 15px rgba(230, 0, 184, 0.3);
@@ -193,7 +217,11 @@
   left: 0;
   right: 0;
   height: 4px;
-  background: linear-gradient(90deg, var(--analytics-primary) 0%, var(--analytics-secondary) 100%);
+  background: linear-gradient(
+    90deg,
+    var(--analytics-primary) 0%,
+    var(--analytics-secondary) 100%
+  );
 }
 
 .stat-card:hover {
@@ -202,7 +230,11 @@
 }
 
 .stat-icon {
-  background: linear-gradient(135deg, var(--analytics-primary) 0%, var(--analytics-primary-light) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--analytics-primary) 0%,
+    var(--analytics-primary-light) 100%
+  );
   color: white;
   width: 60px;
   height: 60px;
@@ -257,7 +289,11 @@
 }
 
 .card h3 {
-  background: linear-gradient(135deg, var(--analytics-primary) 0%, var(--analytics-secondary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--analytics-primary) 0%,
+    var(--analytics-secondary) 100%
+  );
   color: white;
   padding: 1.5rem 2rem;
   margin: 0;
@@ -323,7 +359,11 @@
 }
 
 .btn-primary {
-  background: linear-gradient(135deg, var(--analytics-primary) 0%, var(--analytics-primary-light) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--analytics-primary) 0%,
+    var(--analytics-primary-light) 100%
+  );
   color: white;
   border-color: var(--analytics-primary);
 }
@@ -333,7 +373,11 @@
 }
 
 .btn-secondary {
-  background: linear-gradient(135deg, var(--analytics-secondary) 0%, #7c3aed 100%);
+  background: linear-gradient(
+    135deg,
+    var(--analytics-secondary) 0%,
+    #7c3aed 100%
+  );
   color: white;
   border-color: var(--analytics-secondary);
 }
@@ -368,7 +412,11 @@
   display: grid;
   grid-template-columns: 2fr 1fr 1.5fr 1.5fr 1fr 1.5fr 1fr;
   padding: 1rem 1.5rem;
-  background: linear-gradient(135deg, var(--analytics-primary) 0%, var(--analytics-secondary) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--analytics-primary) 0%,
+    var(--analytics-secondary) 100%
+  );
   color: white;
   font-weight: 600;
   font-size: 0.875rem;
@@ -437,7 +485,11 @@
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  background: linear-gradient(135deg, var(--analytics-primary) 0%, var(--analytics-primary-light) 100%);
+  background: linear-gradient(
+    135deg,
+    var(--analytics-primary) 0%,
+    var(--analytics-primary-light) 100%
+  );
   color: white;
   display: flex;
   align-items: center;
@@ -1090,4 +1142,106 @@
     box-shadow: none;
     border: 1px solid #ccc;
   }
+}
+/* ============================================
+   FIX COMPLETO PARA EMPRESA ANALYTICS
+   Copia este código y agrégalo AL FINAL de tu analytics.css
+   ============================================ */
+
+/* ✅ ARREGLO CRÍTICO: Pestañas con texto completo visible */
+.filters-section .filters-grid {
+  display: flex !important;
+  justify-content: center !important;
+  gap: 1rem !important;
+  flex-wrap: wrap !important;
+  margin-bottom: 2rem !important;
+  padding: 0 !important;
+  align-items: center !important;
+}
+
+.filters-section .filters-grid .btn {
+  /* ✅ CRÍTICO: Evita que el texto se corte */
+  white-space: nowrap !important;
+  min-width: fit-content !important;
+  width: auto !important;
+  overflow: visible !important;
+
+  /* Espaciado generoso */
+  padding: 1rem 2rem !important;
+
+  /* Alineación perfecta emoji + texto */
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 0.75rem !important;
+
+  /* Tipografía clara */
+  font-size: 1rem !important;
+  font-weight: 600 !important;
+  line-height: 1 !important;
+
+  /* Estilos visuales */
+  border-radius: 12px !important;
+  border: 2px solid var(--analytics-border) !important;
+  background: var(--analytics-card-bg) !important;
+  color: var(--analytics-text) !important;
+  cursor: pointer !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08) !important;
+  text-decoration: none !important;
+}
+
+.filters-section .filters-grid .btn:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15) !important;
+  border-color: var(--analytics-primary) !important;
+}
+
+.filters-section .filters-grid .btn.btn-primary {
+  background: linear-gradient(
+    135deg,
+    var(--analytics-primary) 0%,
+    var(--analytics-primary-light) 100%
+  ) !important;
+  color: white !important;
+  border-color: var(--analytics-primary) !important;
+  box-shadow: 0 4px 15px rgba(230, 0, 184, 0.3) !important;
+}
+
+.filters-section .filters-grid .btn.btn-primary:hover {
+  transform: translateY(-2px) !important;
+  box-shadow: 0 8px 20px rgba(230, 0, 184, 0.4) !important;
+}
+
+/* ✅ RESPONSIVE: En móvil, botones más anchos */
+@media (max-width: 768px) {
+  .filters-section .filters-grid {
+    flex-direction: column !important;
+    width: 100% !important;
+    max-width: 400px !important;
+    margin: 0 auto 2rem !important;
+  }
+
+  .filters-section .filters-grid .btn {
+    width: 100% !important;
+    min-width: 100% !important;
+  }
+}
+
+/* ✅ ARREGLO: Subtítulo del header más limpio */
+.analytics-header p {
+  font-size: 1.05rem !important;
+  opacity: 0.95 !important;
+  margin: 0 !important;
+  max-width: 600px !important;
+  margin-left: auto !important;
+  margin-right: auto !important;
+  line-height: 1.6 !important;
+  font-weight: 400 !important;
+}
+
+/* ✅ Si el subtítulo dice "nose1", este lo hará menos notorio visualmente */
+.analytics-header p:contains("nose") {
+  opacity: 0.7 !important;
+  font-size: 0.95rem !important;
 }
